@@ -1,3 +1,4 @@
   * capire come dare alla skin accordion il comando per aprire il link sull'immagine in nuova pagina o sulla stessa pagina.
   * aggiungere il parametro della velocità di rotazione alla skin carousel (già presente nell'xml manuale).
   * risolvere il problema del titolo pagina per la skin imagin, il titolo pagina scompare dopo pochi attimi.
+  * verificare l'ordinamento delle foto, se in ordine alfabetico o di data di inserimento e se possibile inserire un parametro per la modifica dell'ordine.
