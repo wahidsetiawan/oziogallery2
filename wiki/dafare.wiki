@@ -1,2 +1,3 @@
   
  * inventare un metodo per la cancellazione degli xml (setting e file) al salva/applica della voce di menu.
+ * aggiornare la skin Imagin (in attesa della prima stabile di Imagin dall'amico della Romania) e impostare la creazione dell'XML delle impostazioni anche per questa skin con la possibilità di modificare i valori dai parametri della voce di menu.
