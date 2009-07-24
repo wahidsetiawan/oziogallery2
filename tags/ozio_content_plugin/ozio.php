@@ -64,16 +64,37 @@ function plgcontentloadozio( $galleriaozio, $larghezza, $altezza, $scroll )
 
 		$db->setQuery($query);
   		$codice = $db->loadObject();
+		
 
+		$query = 'SELECT *'
+				. ' FROM #__menu'
+				. ' WHERE (link LIKE "index.php?option=com_oziogallery2&view=01tiltviewer" 
+						OR LIKE "index.php?option=com_oziogallery2&view=02flashgallery"
+						OR LIKE "index.php?option=com_oziogallery2&view=03imagin"
+						OR LIKE "index.php?option=com_oziogallery2&view=04carousel"
+						OR LIKE "index.php?option=com_oziogallery2&view=05imagerotator"
+						OR LIKE "index.php?option=com_oziogallery2&view=06accordion"	
+						OR LIKE "index.php?option=com_oziogallery2&view=07flickrslidershow"
+						OR LIKE "index.php?option=com_oziogallery2&view=08flickrphoto"				
+						)'
+				;				
+		$db->setQuery($query);
+  		$cp = $db->loadObject();		
+		
+		
 	$document	= &JFactory::getDocument();
 
-	$gall 	= JURI::root(). $codice->link .'&Itemid='. $galleriaozio;
-	
-if ($codice->published != 0 && $codice->access != 1 && $codice->access != 2) :	
-	$contents = '<iframe src ="'.$gall.'&amp;tmpl=component" width="'.$larghezza.'" height="'.$altezza.'" scrolling="'.$scroll.'">';
-	$contents .= '<p>Your browser does not support iframes.</p>';
-	$contents .= '</iframe>';
+        if ($cp->id = $galleriaozio) :
+		
+				@$gall 	= JURI::root(). $codice->link .'&Itemid='. $galleriaozio;
 
-	return $contents;
-endif;	
+			if (@$codice->published != 0 && @$codice->access != 1 && @$codice->access != 2) :	
+				$contents = '<iframe src ="'.$gall.'&amp;tmpl=component" width="'.$larghezza.'" height="'.$altezza.'" scrolling="'.$scroll.'" frameborder="0">';
+				$contents .= '<p>Your browser does not support iframes.</p>';
+				$contents .= '</iframe>';
+
+				return $contents;
+			endif;
+		endif;			
+	
 }
