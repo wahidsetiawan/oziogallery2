@@ -162,6 +162,7 @@ function plgcontentloadozio( $galleriaozio, $larghezza, $altezza, $scroll )
 //				$contents = '<iframe src ="'.$gall.'&amp;tmpl=component" width="'.$larghezza.'" height="'.$altezza.'" scrolling="'.$scroll.'" frameborder="0">';
 				$contents .= '<p>Your browser does not support iframes.</p>';
 				$contents .= '</iframe>';
+                $contents .='<div class="clr"></div>';				
 
 				return $contents;
 			endif;
