@@ -27,15 +27,12 @@ function plgContentOzio( &$row, &$params, $page=0 )
 
  	if ( $count ) {
 		
-		$larghezza	= $pluginParams->def( 'larghezza', '100%' );
-		$altezza	= $pluginParams->def( 'altezza', '600' );
-		$scroll		= $pluginParams->def( 'scroll', 'no' );
 		
- 		plgContentProcessOzio( $row, $matches, $count, $regex, $larghezza, $altezza, $scroll );
+ 		plgContentProcessOzio( $row, $matches, $count, $regex );
 	}
 }
 
-function plgContentProcessOzio ( &$row, &$matches, $count, $regex, $larghezza, $altezza, $scroll )
+function plgContentProcessOzio ( &$row, &$matches, $count, $regex )
 {
  	for ( $i=0; $i < $count; $i++ )
 	{
@@ -45,14 +42,14 @@ function plgContentProcessOzio ( &$row, &$matches, $count, $regex, $larghezza, $
  		$load = trim( $load );
 
 		
-		$elemento	= plgcontentloadozio( $load, $larghezza, $altezza, $scroll );
+		$elemento	= plgcontentloadozio( $load );
 		$row->text 	= str_replace($matches[0][$i], $elemento, $row->text );
  	}
 
 	$row->text = preg_replace( $regex, '', $row->text );
 }
 
-function plgcontentloadozio( $galleriaozio, $larghezza, $altezza, $scroll )
+function plgcontentloadozio( $galleriaozio )
 {
 
 	$db =& JFactory::getDBO();
