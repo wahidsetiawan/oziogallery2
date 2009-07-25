@@ -17,11 +17,5 @@
 			<option value="0">No</option>
 			<option value="1">Yes</option>
 		</param>
-		<param name="altezza" type="text" default="600" label="Altezza Frame" description="Altezza frame desc"/>
-		<param name="larghezza" type="text" default="100%" label="Larghezza Frame" description="Larghezza frame desc"/>
-		<param name="scroll" type="radio" default="no" label="ScrollBar" description="ScrollBar desc">
-			<option value="no">No</option>
-			<option value="yes">Yes</option>
-		</param>		
 	</params>
 </install>
