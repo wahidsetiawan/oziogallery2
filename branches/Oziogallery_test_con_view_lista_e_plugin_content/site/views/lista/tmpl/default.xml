@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="OzioGallery2 Main List">
+		<message>
+			<![CDATA[OZIOGALLERY2 LIST TIP]]>
+		</message>
+	</layout>
+	<state>
+		<name>OZIOGALLERY2 LIST</name>
+		<description>OZIOGALLERY2 MAIN LIST DESC</description>
+		<params>
+			<param name="introtext" type="textarea" default="" label="INTROTEXT FIELD" rows="8" cols="30" description="INTROTEXT FIELD TIP"/>
+			<param name="showintrotext" type="radio" default="0" label="DISPLAY INTROTEXT" description="DISPLAY INTROTEXT TIP">
+				<option value="0">Hide</option>
+				<option value="1">Show</option>
+			</param>
+				<param name="tipogallerie" type="list" default="0" label="TIPO GALLERIE" description="TIPO GALLERIE DESC">
+				<option value="0">Tutte le Gallerie</option>
+				<option value="1">Solo Gallerie Tilt 3D</option>
+				<option value="2">Solo Gallerie FlashGallery</option>
+				<option value="3">Solo Gallerie Imagin</option>
+				<option value="4">Solo Gallerie Carousel</option>
+				<option value="5">Solo Gallerie Imagerotator</option>
+				<option value="6">Solo Gallerie Accordion</option>
+				<option value="7">Solo Gallerie Flickr Slidershow</option>
+				<option value="8">Solo Gallerie Flickr Photo</option>
+			</param>
+				<param name="ordine" type="list" default="ASC" label="ORDINE GALLERIE" description="ORDINE GALLERIE DESC">
+				<option value="ASC">PER NOME ORDINE ALFABETICO</option>
+				<option value="DESC">PER NOME ORDINE ALFABETICO INVERSO</option>
+			</param>			
+		</params>
+	</state>
+</metadata>
