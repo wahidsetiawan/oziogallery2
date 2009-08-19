@@ -1,2 +1,3 @@
+-- Mercoledì 19 Agosto ore 15:30 rilasciata la seconda versione, la 2.1 stabile alla revisione numero 128
 
 -- Lunedì 20 Luglio ore 19:20 rilasciata la prima versione 2.0Beta alla revisione numero 79
