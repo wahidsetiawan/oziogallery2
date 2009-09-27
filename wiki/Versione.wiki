@@ -1,3 +1,5 @@
+-- Domenica 27 Settembre ore 17:00 rilasciata la terza versione, la 2.2 stabile alla revisione numero 156
+
 -- Mercoledì 19 Agosto ore 15:30 rilasciata la seconda versione, la 2.1 stabile alla revisione numero 128
 
 -- Lunedì 20 Luglio ore 19:20 rilasciata la prima versione 2.0Beta alla revisione numero 79
