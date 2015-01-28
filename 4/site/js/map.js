@@ -33,7 +33,7 @@ jQuery(document).ready(function ($)
 	{
 		$item = $menu->getItem($i);
 		// Skip album list menu items
-		if (strpos($item->link, "&view=00fuerte") === false && strpos($item->link, "&view=nano") === false) continue;
+		if (strpos($item->link, "&view=00fuerte") === false && strpos($item->link, "&view=nano") === false && strpos($item->link, "&view=jgallery") === false) continue;
 
 		$link = JRoute::_( 'index.php?Itemid='.$item->id, false ); //aggiunto il false
 		$icon='';
@@ -47,6 +47,8 @@ jQuery(document).ready(function ($)
 		}
 		if (strpos($item->link, "&view=00fuerte") !== false){
 			$g_parameters[]=array('skin'=>'00fuerte','params'=>$item->params->toArray(),'link'=>$link,'id'=>$item->id,'title'=>$item->title,'icon'=>$icon,'legend_icon'=>$legend_icon);
+		}else if (strpos($item->link, "&view=jgallery") !== false){
+			$g_parameters[]=array('skin'=>'jgallery','params'=>$item->params->toArray(),'link'=>$link,'id'=>$item->id,'title'=>$item->title,'icon'=>$icon,'legend_icon'=>$legend_icon);
 		}else{
 			$kind=$item->params->get("ozio_nano_kind", "picasa");
 			$albumvisibility=$item->params->get("albumvisibility", "public");
@@ -535,6 +537,8 @@ jQuery(document).ready(function ($)
 				var photolink='';
 				if (g_parameters[obj.album_index].skin=='00fuerte'){
 					photolink=g_parameters[obj.album_index].link+'#'+(obj.photo_index+1);
+				}else if (g_parameters[obj.album_index].skin=='jgallery'){
+					photolink=g_parameters[obj.album_index].link;
 				}else{
 					photolink=g_parameters[obj.album_index].link+'/'+entry.gphoto$id.$t;
 				}

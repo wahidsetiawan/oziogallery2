@@ -63,7 +63,7 @@ jQuery(document).ready(function ($)
 	{
 		$item = $menu->getItem($i);
 		// Skip album list menu items
-		if (strpos($item->link, "&view=00fuerte") === false && strpos($item->link, "&view=nano") === false) continue;
+		if (strpos($item->link, "&view=00fuerte") === false && strpos($item->link, "&view=nano") === false && strpos($item->link, "&view=jgallery") === false) continue;
 
 		$album = new stdClass();
 		$link = "";
@@ -78,7 +78,7 @@ jQuery(document).ready(function ($)
 			$link = $item->link . '&Itemid='.$item->id;
 		}
 		
-		if (strpos($item->link, "&view=00fuerte") !== false){
+		if (strpos($item->link, "&view=00fuerte") !== false || strpos($item->link, "&view=jgallery") !== false){
 //?>
 
 		// Crea un nuovo sottocontenitore e lo appende al principale
