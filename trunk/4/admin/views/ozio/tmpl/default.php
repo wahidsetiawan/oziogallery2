@@ -87,6 +87,12 @@
 						$row->link='index.php?option=com_oziogallery3&view=00fuerte&Itemid='.$row->id;
 						$g_parameters[]=$row;
 					}
+					if ( $row->link == 'index.php?option=com_oziogallery3&view=jgallery'){
+						$row->params=json_decode($row->params,true);
+						$row->skin='jgallery';
+						$row->link='index.php?option=com_oziogallery3&view=jgallery&Itemid='.$row->id;
+						$g_parameters[]=$row;
+					}
 					if ( $row->link == 'index.php?option=com_oziogallery3&view=nano'){
 						$result = new JRegistry;
 						$result->loadString($row->params);
