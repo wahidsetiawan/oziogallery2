@@ -88,10 +88,23 @@
 						$g_parameters[]=$row;
 					}
 					if ( $row->link == 'index.php?option=com_oziogallery3&view=jgallery'){
-						$row->params=json_decode($row->params,true);
-						$row->skin='jgallery';
-						$row->link='index.php?option=com_oziogallery3&view=jgallery&Itemid='.$row->id;
-						$g_parameters[]=$row;
+						$result = new JRegistry;
+						$result->loadString($row->params);
+						$albumvisibility=$result->get("albumvisibility", "public");
+						if ($albumvisibility=='limited'){
+							//lo aggiungo come gli altri g_parameters
+							
+							$row->params=array(
+								'userid'=>$result->get("ozio_nano_userID", "110359559620842741677"),
+								'albumvisibility'=>'limited',
+								'limitedalbum'=>$result->get("limitedalbum", ""),
+								'limitedpassword'=>$result->get("limitedpassword", "")
+							);
+							$row->skin='jgallery';
+							$row->link='index.php?option=com_oziogallery3&view=nano&Itemid='.$row->id;
+
+							$g_parameters[]=$row;
+						}
 					}
 					if ( $row->link == 'index.php?option=com_oziogallery3&view=nano'){
 						$result = new JRegistry;
@@ -155,10 +168,17 @@
 											whiteList: <?php echo json_encode($item->params->get("ozio_nano_whiteList", "")); ?>,
 											<?php
 											$non_printable_separator="\x16";
+											$new_non_printable_separator="|!|";
 											$albumList=$item->params->get("ozio_nano_albumList", array());
 											if (!empty($albumList) && is_array($albumList) ){
 												if (count($albumList)==1){
-													list($albumid,$title)=explode($non_printable_separator,$albumList[0]);
+													if (strpos($albumList[0],$non_printable_separator)!==FALSE){
+														list($albumid,$title)=explode($non_printable_separator,$albumList[0]);
+													}else{
+														list($albumid,$title)=explode($new_non_printable_separator,$albumList[0]);
+													}
+													
+													
 													$kind=$item->params->get("ozio_nano_kind", "picasa");
 													if ($kind=='picasa'){
 														echo 'album:'.json_encode($albumid).",\n";
@@ -168,7 +188,11 @@
 												}else{
 													$albumTitles=array();
 													foreach ($albumList as $a){
-														list($albumid,$title)=explode($non_printable_separator,$a);
+														if (strpos($a,$non_printable_separator)!==FALSE){
+															list($albumid,$title)=explode($non_printable_separator,$a);
+														}else{
+															list($albumid,$title)=explode($new_non_printable_separator,$a);
+														}
 														$albumTitles[]=$title;
 													}
 													echo 'albumList:'.json_encode(implode('|',$albumTitles)).",\n";

@@ -2,3 +2,18 @@
 	background: url("../../00fuerte/img/tb_preload.gif") no-repeat scroll 50% 50%; 
 	min-height: 66px;
 }
+
+.jgallery.jgallery-standard{
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#jgallery > div.album{
+	display:none;
+}
+#jgallery > a{
+	display:none;
+}
+#jgallery > img{
+	display:none;
+}
