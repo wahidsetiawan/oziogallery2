@@ -79,7 +79,7 @@ jQuery(document).ready(function ($)
 		{
 			$link = $item->link . '&Itemid='.$item->id;
 		}
-		if (strpos($item->link, "&view=00fuerte") !== false || strpos($item->link, "&view=jgallery") !== false){
+		if (strpos($item->link, "&view=00fuerte") !== false){
 //?>
 		// Crea un nuovo sottocontenitore e lo appende al principale
 		jQuery("#container_pwi_list > ul").append(
@@ -210,17 +210,22 @@ jQuery(document).ready(function ($)
 				album_local_url:'<?php echo JRoute::_($link); ?>',
 				thumbSize:'<?php echo $this->Params->get("images_size", 180); ?>',
 				g_flickrApiKey:"2f0e634b471fdb47446abcb9c5afebdc",
-				locationHash: <?php echo json_encode(intval($item->params->get("ozio_nano_locationHash", "1"))); ?>,
+				locationHash: <?php echo json_encode(strpos($item->link, "&view=jgallery") === false?intval($item->params->get("ozio_nano_locationHash", "1")):0); ?>,
 				kind: <?php echo json_encode($item->params->get("ozio_nano_kind", "picasa")); ?>,
 				userID: <?php echo json_encode($item->params->get("ozio_nano_userID", "110359559620842741677")); ?>,
 				blackList: <?php echo json_encode($item->params->get("ozio_nano_blackList", "Scrapbook|profil|2013-")); ?>,
 				whiteList: <?php echo json_encode($item->params->get("ozio_nano_whiteList", "")); ?>,
 				<?php
 				$non_printable_separator="\x16";
+				$new_non_printable_separator="|!|";
 				$albumList=$item->params->get("ozio_nano_albumList", array());
 				if (!empty($albumList) && is_array($albumList) ){
 					if (count($albumList)==1){
-						list($albumid,$title)=explode($non_printable_separator,$albumList[0]);
+						if (strpos($albumList[0],$non_printable_separator)!==FALSE){
+							list($albumid,$title)=explode($non_printable_separator,$albumList[0]);
+						}else{
+							list($albumid,$title)=explode($new_non_printable_separator,$albumList[0]);
+						}
 						$kind=$item->params->get("ozio_nano_kind", "picasa");
 						if ($kind=='picasa'){
 							echo 'album:'.json_encode($albumid).",\n";
@@ -230,7 +235,11 @@ jQuery(document).ready(function ($)
 					}else{
 						$albumTitles=array();
 						foreach ($albumList as $a){
-							list($albumid,$title)=explode($non_printable_separator,$a);
+							if (strpos($a,$non_printable_separator)!==FALSE){
+								list($albumid,$title)=explode($non_printable_separator,$a);
+							}else{
+								list($albumid,$title)=explode($new_non_printable_separator,$a);
+							}
 							$albumTitles[]=$title;
 						}
 						echo 'albumList:'.json_encode(implode('|',$albumTitles)).",\n";
