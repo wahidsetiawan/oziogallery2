@@ -1340,6 +1340,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         this.$changeMode = this.$container.find( '.fa.change-mode' );
         this.$random = this.$container.find( '.random' );
         this.$slideshow = this.$container.find( '.slideshow' );
+        this.$infobutton = this.$container.find( '.infobutton' );
         this.intJGalleryId = this.$jGallery.attr( 'data-jgallery-id' );
         this.booSlideshowPlayed = false;
         this.booLoadingInProgress = false;
@@ -1823,6 +1824,226 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             this.$slideshow.is( '.fa-play' ) ? this.slideshowPlay() : this.slideshowPause();
         },
 
+		jgallery_gi_linkify: function(inputText) {
+			var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+			//URLs starting with http://, https://, or ftp://
+			replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+			replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+
+			//URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+			replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+			replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+
+			//Change email addresses to mailto:: links.
+			replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+			replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
+
+			return replacedText;
+		},
+	
+		showInfoBox: function() {
+			var current=this.$element.find( 'img.active' ).attr( 'src' );
+			var photoData=this.jGallery.options.photoData[current];
+			
+			var gO=this.jGallery.options;
+			var g_i18nTranslations=this.jGallery.options.i18n;
+			var $gE=this.jGallery;
+			
+			
+				var lat=photoData.lat;
+				var lng=photoData.lng;
+				
+				var info_box_css='ozio-jgallery-white-info-box-with-gmap';
+				if (lat=='' || lng==''){
+					info_box_css='ozio-jgallery-white-info-box';
+				}
+		  
+				 var html='';
+				 html+='<div  class="jGalleryInfoBox '+info_box_css+' mfp-hide">';
+				 html+='<div class="ozio-jgallery-infobox-middle">';
+				 html+='	<dl class="odl-horizontal">';
+				 html+=' 		<dt></dt><dd><img class="oimg-polaroid pi-image" alt="preview"/></dd>';
+				 if (gO.showInfoBoxAlbum){
+					 html+=' 		<dt>'+g_i18nTranslations.infoBoxAlbum+'</dt><dd class="pi-album"></dd>';
+				 }
+				 if (gO.showInfoBoxPhoto){
+				 html+='	<dt>'+g_i18nTranslations.infoBoxPhoto+'</dt><dd class="pi-photo"></dd>';
+				 }
+				 if (gO.showInfoBoxDate){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxDate+'</dt><dd class="pi-date"></dd>';
+				 }
+				 if (gO.showInfoBoxDimensions){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxDimensions+'</dt><dd class="pi-dimensions"></dd>';
+				 }
+				 if (gO.showInfoBoxFilename){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxFilename+'</dt><dd class="pi-filename"></dd>';
+				 }
+				 if (gO.showInfoBoxFilesize){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxFileSize+'</dt><dd class="pi-filesize"></dd>';
+				 }
+				 if (gO.showInfoBoxCamera){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxCamera+'</dt><dd class="pi-camera"></dd>';
+				 }
+				 if (gO.showInfoBoxFocallength){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxFocalLength+'</dt><dd class="pi-focallength"></dd>';
+				 }
+				 if (gO.showInfoBoxExposure){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxExposure+'</dt><dd class="pi-exposure"></dd>';
+				 }
+				 if (gO.showInfoBoxFNumber){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxFNumber+'</dt><dd class="pi-fnumber"></dd>';
+				 }
+				 if (gO.showInfoBoxISO){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxISO+'</dt><dd class="pi-iso"></dd>';
+				 }
+				 if (gO.showInfoBoxMake){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxMake+'</dt><dd class="pi-make"></dd>';
+				 }
+				 if (gO.showInfoBoxFlash){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxFlash+'</dt><dd class="pi-flash"></dd>';
+				 }
+				 if (gO.showInfoBoxViews){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxViews+'</dt><dd class="pi-views"></dd>';
+				 }
+				 if (gO.showInfoBoxComments){
+				 html+='					<dt>'+g_i18nTranslations.infoBoxComments+'</dt><dd class="pi-comments"></dd>';
+				 }
+				 html+='				</dl>';
+				 html+='				<div class="pi-map-container"></div>';
+				 html+='				</div>';
+				 html+='					<div class="pi-photo-buttons">';
+				 if (gO.showInfoBoxLink){
+				 html+='					<a href="#" class="btn pi-link" target="_blank">';
+				 html+='						↗ Google+';
+				 html+='					</a>';
+				 }
+				 if (gO.showInfoBoxDownload){
+				 html+='					<a href="#" class="btn pi-download">';
+				 html+='						⬇ Download';
+				 html+='					</a>';
+				 }
+				 html+='					</div>';
+						
+				  if ($gE.conInfoBox){
+				  }else{
+						$gE.conInfoBox=jQuery(html).appendTo('body');
+				  }
+				  
+				  $gE.conInfoBox.css('background-image','url(\''+gO.infoboxBgUrl+'\')');
+
+			  $gE.conInfoBox.find('.pi-album').text(photoData.album);
+			  $gE.conInfoBox.find('.pi-photo').text(photoData.photo);
+			  
+			  $gE.conInfoBox.find('.pi-photo').html(this.jgallery_gi_linkify($gE.conInfoBox.find('.pi-photo').html()));
+			  
+			  $gE.conInfoBox.find('.pi-date').text(photoData.date);
+			  $gE.conInfoBox.find('.pi-dimensions').text(photoData.dimensions);
+			  $gE.conInfoBox.find('.pi-filename').text(photoData.filename);
+			  $gE.conInfoBox.find('.pi-filesize').text(photoData.filesize);
+			  $gE.conInfoBox.find('.pi-camera').text(photoData.camera);
+			  $gE.conInfoBox.find('.pi-focallength').text(photoData.focallength);
+			  $gE.conInfoBox.find('.pi-exposure').text(photoData.exposure);
+			  $gE.conInfoBox.find('.pi-fnumber').text(photoData.fnumber);
+			  $gE.conInfoBox.find('.pi-iso').text(photoData.iso);
+			  $gE.conInfoBox.find('.pi-make').text(photoData.make);
+			  $gE.conInfoBox.find('.pi-flash').text(photoData.flash);
+			  $gE.conInfoBox.find('.pi-views').text(photoData.views);
+			  $gE.conInfoBox.find('.pi-comments').text(photoData.comments);
+			  $gE.conInfoBox.find('.pi-image').attr('src',photoData.image);
+			  $gE.conInfoBox.find('.pi-link').attr('href',photoData.link);
+			  $gE.conInfoBox.find('.pi-download').attr('href',photoData.download);
+			  
+			  jQuery.magnificPopup.open({
+				items: {
+				  src: $gE.conInfoBox, // can be a HTML string, jQuery object, or CSS selector
+				  type: 'inline',
+				  closeBtnInside: true,
+				  showCloseBtn: true,
+				  enableEscapeKey: true,
+				  modal: true
+				},
+				callbacks: {
+					open: function(){
+						var highest_index=100000;
+						//var highest_index=getHighestZIndex( $gE.conVw );
+						var $mfpwrap= $gE.conInfoBox.closest('.mfp-wrap');
+						var $mfpbg= jQuery('.mfp-bg');
+						var $mfpcontent= $gE.conInfoBox.closest('.mfp-content');
+						var $mfppreloader=$mfpwrap.find('.mfp-preloader');
+						var $mfpclose=$gE.conInfoBox.find('.mfp-close');
+						
+						$mfpbg.css('z-index',highest_index+1);
+						$mfpwrap.css('z-index',highest_index+2);
+						$mfppreloader.css('z-index',highest_index+3);
+						$mfpcontent.css('z-index',highest_index+4);
+						$mfpclose.css('z-index',highest_index+5);
+						
+						var lat=photoData.lat;
+						var lng=photoData.lng;
+						if (lat=='' || lng==''){
+							$gE.conInfoBox.find('.pi-map-container').html('');
+						}else{
+							$gE.conInfoBox.find('.pi-map-container').html('<span id="nano-gmap-viewer" style="width:100%; height:400px;"></span>');
+							var latLng = new google.maps.LatLng(lat,lng);
+
+							 var map = new google.maps.Map(document.getElementById('nano-gmap-viewer'), {
+								zoom: 14,
+								center: latLng,
+								mapTypeId: google.maps.MapTypeId.MAP,
+								scrollwheel: false
+							 });	
+							 var marker = new google.maps.Marker({
+									position: latLng
+								});
+
+							 marker.setMap(map);				     
+						}	
+						var json_details_url=photoData.json_details;
+						if (json_details_url!=''){
+							$gE.conInfoBox.find('.pi-views').text('...');
+							$gE.conInfoBox.find('.pi-comments').text('...');
+							jQuery.ajax({
+								'url':json_details_url,
+								'dataType': 'json',
+								'success': function (result, textStatus, jqXHR){
+									if ($gE.conInfoBox!=null){
+										if (typeof result.entry !== "undefined" && typeof result.entry.gphoto$commentCount !== "undefined" && typeof result.entry.gphoto$commentCount.$t !== "undefined"){
+											$gE.conInfoBox.find('.pi-comments').text(result.entry.gphoto$commentCount.$t);
+										}else{
+											$gE.conInfoBox.find('.pi-comments').text('-na-');
+										}
+			
+										if (typeof result.entry !== "undefined" && typeof result.entry.gphoto$viewCount !== "undefined" && typeof result.entry.gphoto$viewCount.$t !== "undefined"){
+											$gE.conInfoBox.find('.pi-views').text(result.entry.gphoto$viewCount.$t);
+										}else{
+											$gE.conInfoBox.find('.pi-views').text('-na-');
+										}
+									}
+								},
+								'error': function (jqXHR, textStatus, error){
+									$gE.conInfoBox.find('.pi-views').text('-na-');
+									$gE.conInfoBox.find('.pi-comments').text('-na-');
+								}
+							});
+						}else{
+							$gE.conInfoBox.find('.pi-views').text('-na-');
+							$gE.conInfoBox.find('.pi-comments').text('-na-');
+						}
+					},
+					afterClose: function() {
+						//$gE.conInfoBox.remove();
+						//$gE.conInfoBox=null;
+						//jQuery('div.jGalleryInfoBox').remove();
+					}
+				  }	    
+			  });	  
+					
+			
+			
+			
+		},
+		
         slideshowSetTimeout: function() {
             var self = this;
 
@@ -2263,6 +2484,7 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                                     <span class="fa fa-random random jgallery-btn jgallery-btn-small inactive"></span>\
                                     <span class="fa fa-th full-screen jgallery-btn jgallery-btn-small"></span>\
                                     <span class="fa fa-ellipsis-h minimalize-thumbnails jgallery-btn jgallery-btn-small inactive"></span>\
+                                    <span class="fa fa-info infobutton jgallery-btn jgallery-btn-small"></span>\
                                 </div>\
                                 <div class="title before"></div>\
                             </div>\
@@ -2552,6 +2774,12 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                             self.zoom.slideshowPlayPause();
                         }
                     } );   
+					
+                    self.zoom.$infobutton.on( {
+                        click: function() {
+                            self.zoom.showInfoBox();
+                        }
+                    } );   
 
                     self.zoom.$container.find( '.minimalize-thumbnails' ).on( {
                         click: function() {
@@ -2654,6 +2882,9 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
             this.refreshThumbnailsVisibility();
             this.zoom.refreshSize();
             this.options.slideshow ? this.zoom.$slideshow.show() : this.zoom.$slideshow.hide();
+			
+			this.options.showInfoBoxButton ? this.zoom.$infobutton.show() : this.zoom.$infobutton.hide();
+			
             this.options.slideshow && this.options.slideshowCanRandom && this.options.slideshowAutostart ? this.zoom.$random.show(): this.zoom.$random.hide();
             this.options.slideshow && this.options.slideshowCanRandom && this.options.slideshowRandom ? this.zoom.$random.addClass( 'active' ) : this.zoom.$random.removeClass( 'active' );
 

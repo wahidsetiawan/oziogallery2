@@ -230,9 +230,19 @@ class plgContentOzio extends JPlugin
 		if ($this->Params->get("load_css_bootstrap", 0)==1){
 			JHtmlBootstrap::loadCSS();
 		}
+		$this->document->addStyleSheet(JUri::base(true) . "/components/com_oziogallery3/views/nano/js/third.party/magnific-popup/magnific-popup.css");
 		$this->document->addStyleSheet(JUri::base(true) . "/components/com_oziogallery3/views/nano/js/third.party/font-awesome/css/font-awesome.min.css");
 		$this->document->addStyleSheet(JUri::base(true) . "/components/com_oziogallery3/views/jgallery/css/jgallery.min.css?v=1.5.2");
 
+		$current_uri = JFactory::getURI();
+		if ($this->Params->get("info_button", false)) {
+			if (empty($GLOBALS["contentmap"]["gapi"]))
+			{
+				$GLOBALS["contentmap"]["gapi"] = true;
+				$this->document->addScript(($current_uri->isSSL()?'https':'http')."://maps.google.com/maps/api/js?sensor=false");
+			}
+		}
+		$this->document->addScript(JUri::base(true) . "/components/com_oziogallery3/views/nano/js/third.party/magnific-popup/jquery.magnific-popup.js");
 
 		$this->document->addScript(JUri::base(true) . "/components/com_oziogallery3/views/jgallery/js/tinycolor-0.9.16.min.js");
 		$this->document->addScript(JUri::base(true) . "/components/com_oziogallery3/views/jgallery/js/touchswipe.min.js");

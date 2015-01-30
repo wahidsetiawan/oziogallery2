@@ -15,6 +15,7 @@ jQuery( document ).ready(function( $ ) {
 	
 	var num_album_to_load=0;
 	var g_parameters=[];
+	var g_photo_data=[];
 	var multi_album=false;
 	
 			<?php
@@ -134,6 +135,7 @@ jQuery( document ).ready(function( $ ) {
 									g_parameters[nextI]={};
 									jQuery.extend(g_parameters[nextI],context);
 									g_parameters[nextI].title=itemTitle;
+									g_parameters[nextI].userid=context.userID;
 									g_parameters[nextI].params={
 										'userid':context.userID,
 										'albumvisibility':'public',
@@ -337,6 +339,121 @@ jQuery( document ).ready(function( $ ) {
 			var ratio = 1;
 			// Avoids divisions by 0
 			if (width) ratio = height / width;
+				
+			  photo_data={};
+
+				photo_data.seed=seed;
+				photo_data.photo_id='';
+				photo_data.album_id='';
+				photo_data.userid=g_parameters[this.album_index]['userid'];
+				if (typeof result.feed.entry[i].gphoto$id !== "undefined" && typeof result.feed.entry[i].gphoto$id.$t !== "undefined"){
+					photo_data.photo_id=result.feed.entry[i].gphoto$id.$t;
+				}
+				if (typeof result.feed.entry[i].gphoto$albumid !== "undefined" && typeof result.feed.entry[i].gphoto$albumid.$t !== "undefined"){
+					photo_data.album_id=result.feed.entry[i].gphoto$albumid.$t;
+				}
+			
+			  
+			  photo_data.album='-na-';
+			  photo_data.album=result.feed.title.$t;
+			  
+			  var data=result.feed.entry[i];
+			  
+			  photo_data.photo='-na-';
+			  if (data.summary.$t!=''){
+				  photo_data.photo=data.summary.$t;
+			  }
+			  photo_data.date='-na-';
+			  if (typeof data.gphoto$timestamp !== "undefined" && typeof data.gphoto$timestamp.$t !== "undefined"){
+				  var timestamp=data.gphoto$timestamp.$t;
+				  var photo_date=new Date();
+				  photo_date.setTime(timestamp);
+				  photo_data.date=photo_date.getDate()+'/'+(photo_date.getUTCMonth()+1)+'/'+photo_date.getUTCFullYear()+' '+photo_date.getUTCHours()+':'+photo_date.getUTCMinutes();
+			  }
+			  
+			  photo_data.dimensions=data.gphoto$width.$t+' x '+data.gphoto$height.$t;
+			  photo_data.filename='-na-';
+				if (typeof data.title !== "undefined" && typeof data.title.$t !== "undefined"){
+					photo_data.filename=data.title.$t;
+				}
+			  
+				photo_data.filesize='-na-';
+				if (typeof data.gphoto$size !== "undefined" && typeof data.gphoto$size.$t !== "undefined"){
+					photo_data.filesize=data.gphoto$size.$t;
+					if (photo_data.filesize>(1024*1024)){
+						photo_data.filesize=(photo_data.filesize/(1024*1024)).toFixed(2);
+						photo_data.filesize=photo_data.filesize+'M';
+					}else if (photo_data.filesize>(1024)){
+						photo_data.filesize=(photo_data.filesize/(1024)).toFixed(2);
+						photo_data.filesize=photo_data.filesize+'K';
+					}				
+				}
+				photo_data.camera='-na-';
+				photo_data.focallength='-na-';
+				photo_data.exposure='-na-';
+				photo_data.fnumber='-na-';
+				photo_data.iso='-na-';
+				photo_data.make='-na-';
+				photo_data.flash='-na-';
+				if (typeof data.exif$tags !== "undefined"){
+				
+					if (typeof data.exif$tags.exif$model !== "undefined" && typeof data.exif$tags.exif$model.$t !== "undefined"){
+						photo_data.camera=data.exif$tags.exif$model.$t;
+					}
+					if (typeof data.exif$tags.exif$exposure !== "undefined" && typeof data.exif$tags.exif$exposure.$t !== "undefined"){
+						var photo_exposure_d=Math.round(1/data.exif$tags.exif$exposure.$t);
+						photo_data.exposure='1/'+photo_exposure_d+" sec";
+					}
+					if (typeof data.exif$tags.exif$focallength !== "undefined" && typeof data.exif$tags.exif$focallength.$t !== "undefined"){
+						photo_data.focallength=data.exif$tags.exif$focallength.$t+" mm";
+					}
+					if (typeof data.exif$tags.exif$iso !== "undefined" && typeof data.exif$tags.exif$iso.$t !== "undefined"){
+						photo_data.iso=data.exif$tags.exif$iso.$t;
+					}
+					if (typeof data.exif$tags.exif$make !== "undefined" && typeof data.exif$tags.exif$make.$t !== "undefined"){
+						photo_data.make=data.exif$tags.exif$make.$t;
+					}
+					if (typeof data.exif$tags.exif$flash !== "undefined" && typeof data.exif$tags.exif$flash.$t !== "undefined"){
+						photo_data.flash=data.exif$tags.exif$flash.$t?'Yes':'No';
+					}
+					if (typeof data.exif$tags.exif$fstop !== "undefined" && typeof data.exif$tags.exif$fstop.$t !== "undefined"){
+						photo_data.fnumber=data.exif$tags.exif$fstop.$t;
+					}
+				}
+				photo_data.lat='';
+				photo_data.lng='';
+				if (typeof data.georss$where !== "undefined" && typeof data.georss$where.gml$Point !== "undefined" &&
+					typeof data.georss$where.gml$Point.gml$pos !== "undefined" && typeof data.georss$where.gml$Point.gml$pos.$t !== "undefined"){
+				
+					var latlong=data.georss$where.gml$Point.gml$pos.$t.split(" ");
+					photo_data.lat=latlong[0];
+					photo_data.lng=latlong[1];
+				}
+				  
+			  photo_data.comments='-na-';
+			  if (typeof data.gphoto$commentCount !== "undefined" && typeof data.gphoto$commentCount.$t !== "undefined"){
+				  photo_data.comments=data.gphoto$commentCount;
+			  }
+				
+			  photo_data.views='...';
+			photo_data.json_details='';
+				if (typeof data.link !== "undefined"){
+					for (var j=0;j<data.link.length;j++){
+						if (data.link[j].rel=='self' && data.link[j].type=='application/atom+xml'){
+							photo_data.json_details=data.link[j].href;
+							break;
+						}
+					}
+				}
+			  
+			
+			  photo_data.link="https://plus.google.com/photos/"+photo_data.userid+"/albums/"+photo_data.album_id+"/"+photo_data.photo_id;
+			  photo_data.download=photo_data.seed+ 's0-d/';
+			  photo_data.image= photo_data.seed+ 's200/';
+						
+			
+			
+			/*
 			var photo_data={
 					'seed': seed,
 					'width': width,
@@ -359,6 +476,7 @@ jQuery( document ).ready(function( $ ) {
 					'gphoto_timestamp':'',
 					'lat':'',
 					'long':'',
+					'lng':'',
 					'google_url':'',
 					
 					'photo_id':'',
@@ -421,6 +539,7 @@ jQuery( document ).ready(function( $ ) {
 				var latlong=result.feed.entry[i].georss$where.gml$Point.gml$pos.$t.split(" ");
 				photo_data['lat']=latlong[0];
 				photo_data['long']=latlong[1];
+				photo_data['lng']=latlong[1];
 			}
 			if (typeof result.feed.entry[i].link !== "undefined"){
 				for (var j=0;j<result.feed.entry[i].link.length;j++){
@@ -436,6 +555,7 @@ jQuery( document ).ready(function( $ ) {
 					}
 				}
 			}
+			*/
 			
 			
 			g_parameters[this.album_index].slides.push(photo_data);
@@ -513,6 +633,8 @@ jQuery( document ).ready(function( $ ) {
 					jcontainer.append(ha);
 				}
 				
+				g_photo_data[large]=g_parameters[this.album_index].slides[i];
+				
 			}
 			
 			//console.log(slides);
@@ -538,12 +660,60 @@ jQuery( document ).ready(function( $ ) {
 					tooltipZoom:  <?php echo json_encode(JText::_('COM_OZIOGALLERY3_JGALLERY_ZOOM_LBL'));?>,//Zoom
 					
 					
+					thumbnailsPosition: <?php echo json_encode($this->Params->get("thumbnailsPosition", "bottom")); ?>,
+					backgroundColor: <?php echo json_encode($this->Params->get("backgroundColor", "#fff")); ?>,
+					textColor: <?php echo json_encode($this->Params->get("textColor", "#000")); ?>,
 					
 					width: <?php echo json_encode($gallerywidth["text"] . $gallerywidth["select"]); ?>,
 					height: <?php echo json_encode($this->Params->get("galleryheight", "600")."px"); ?>,
 					transition: <?php echo json_encode($this->Params->get("transition", "rotateCubeRightOut_rotateCubeRightIn")); ?>,
 					transitionDuration: <?php echo json_encode(intval($this->Params->get("transition_speed", 700))/1000.0); ?>,
-					mode: viewer_mode
+					mode: viewer_mode,
+					photoData: g_photo_data,
+					
+					showInfoBoxButton: <?php echo json_encode(intval($this->Params->get("info_button", "1"))==1); ?>,
+					showInfoBoxAlbum: <?php echo json_encode(!intval($this->Params->get("hide_infobox_album", "0"))); ?>,
+					showInfoBoxPhoto: <?php echo json_encode(!intval($this->Params->get("hide_infobox_photo", "0"))); ?>,
+					showInfoBoxDate: <?php echo json_encode(!intval($this->Params->get("hide_infobox_date", "0"))); ?>,
+					showInfoBoxDimensions: <?php echo json_encode(!intval($this->Params->get("hide_infobox_width_height", "0"))); ?>,
+					showInfoBoxFilename: <?php echo json_encode(!intval($this->Params->get("hide_infobox_file_name", "0"))); ?>,
+					showInfoBoxFilesize: <?php echo json_encode(!intval($this->Params->get("hide_infobox_file_size", "0"))); ?>,
+					showInfoBoxCamera: <?php echo json_encode(!intval($this->Params->get("hide_infobox_model", "0"))); ?>,
+					showInfoBoxFocallength: <?php echo json_encode(!intval($this->Params->get("hide_infobox_focallength", "0"))); ?>,
+					showInfoBoxFNumber: <?php echo json_encode(!intval($this->Params->get("hide_infobox_fstop", "0"))); ?>,
+					showInfoBoxExposure: <?php echo json_encode(!intval($this->Params->get("hide_infobox_exposure", "0"))); ?>,
+					showInfoBoxISO: <?php echo json_encode(!intval($this->Params->get("hide_infobox_iso", "0"))); ?>,
+					showInfoBoxMake: <?php echo json_encode(!intval($this->Params->get("hide_infobox_make", "0"))); ?>,
+					showInfoBoxFlash: <?php echo json_encode(!intval($this->Params->get("hide_infobox_flash", "0"))); ?>,
+					showInfoBoxViews: <?php echo json_encode(!intval($this->Params->get("hide_infobox_views", "0"))); ?>,
+					showInfoBoxComments: <?php echo json_encode(!intval($this->Params->get("hide_infobox_comments", "0"))); ?>,
+					showInfoBoxLink: <?php echo json_encode(!intval($this->Params->get("hide_infobox_link", "0"))); ?>,
+					showInfoBoxDownload: <?php echo json_encode(!intval($this->Params->get("hide_infobox_download", "0"))); ?>,
+					infoboxBgUrl: <?php echo json_encode($this->Params->get("infobox_bg_url", "https://lh4.googleusercontent.com/nr01-F6eM6Mb09CuDZBLvnxzpyRMpWQ0amrS593Rb7Q=w1200")); ?>,
+					
+					i18n:{
+						'paginationPrevious':<?php echo json_encode(JText::_('JPREV'));?>,
+						'paginationNext':<?php echo json_encode(JText::_('JNEXT'));?>,		
+						'infoBoxPhoto':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_PHOTO_LBL'));?>,
+						'infoBoxDate':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_DATE_LBL'));?>,
+						'infoBoxAlbum':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_ALBUM_LBL'));?>,
+						'infoBoxDimensions':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_DIMENSIONS_LBL'));?>,
+						'infoBoxFilename':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_FILENAME_LBL'));?>,
+						'infoBoxFileSize':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_FILESIZE_LBL'));?>,
+						'infoBoxCamera':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_CAMERA_LBL'));?>,
+						'infoBoxFocalLength':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_FOCALLENGTH_LBL'));?>,
+						'infoBoxExposure':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_EXPOSURE_LBL'));?>,
+						'infoBoxFNumber':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_FSTOP_LBL'));?>,
+						'infoBoxISO':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_ISO_LBL'));?>,
+						'infoBoxMake':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_CAMERAMAKE_LBL'));?>,
+						'infoBoxFlash':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_FLASH_LBL'));?>,
+						'infoBoxViews':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_VIEWS_LBL'));?>,
+						'infoBoxComments':<?php echo json_encode(JText::_('COM_OZIOGALLERY3_PHOTOINFO_COMMENTS_LBL'));?>
+						
+						}				
+					
+		
+					
 				});
 				
 			}
