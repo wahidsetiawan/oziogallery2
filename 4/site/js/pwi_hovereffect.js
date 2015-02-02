@@ -1,5 +1,11 @@
 jQuery(document).ready(function ($)
 {
+	if (typeof(String.prototype.localeCompare) === 'undefined') {
+		String.prototype.localeCompare = function(str, locale, options) {
+			return ((this == str) ? 0 : ((this > str) ? 1 : -1));
+		};
+	}
+
 	var author;
     g_flickrThumbAvailableSizes=new Array(75,100,150,240,500,640);        //,1024),
     g_flickrThumbAvailableSizesStr=new Array('sq','t','q','s','m','z');    //,'b'), --> b is not available for photos before 05.25.2010
@@ -22,8 +28,22 @@ jQuery(document).ready(function ($)
 	$selected_ids = $this->Params->get("menuitems_filter_items", array());
 	$all_items = $menu->getItems("component", "com_oziogallery3");
 
+	$orig_sort=0;
+	foreach($all_items as &$item )
+	{
+		$item->orig_sort=$orig_sort;
+		$orig_sort++;
+	}
+	unset($item);
+	
 	$order_by = $this->Params->get("list_orderby", "menu");
 	$order_dir = $this->Params->get("list_orderdir", "asc");
+	
+	echo "\n";
+	echo 'var order_by='.json_encode($order_by).";\n";
+	echo 'var order_dir='.json_encode($order_dir).";\n";
+	
+	
 	function listsort_title($a, $b){
         return strcmp($a->title,$b->title);
 	}
@@ -85,6 +105,13 @@ jQuery(document).ready(function ($)
 		jQuery("#container_pwi_list > ul").append(
 			author = jQuery("<li/>", {'id':'ozio-he-author<?php echo $item->id; ?>', 'class':'ozio-he-author','style':'width:<?php echo $this->Params->get("images_size", 180); ?>px'})
 		);
+		
+		author.data('ozio-data',{
+			album_local_title:<?php echo json_encode($item->title); ?>,
+			album_id:'<?php echo $item->id; ?>',
+			album_orig_sort:'<?php echo $item->orig_sort; ?>'
+		});
+		
 
 		// Imposta i parametri e innesca il caricamento
 		author.pwi(
@@ -93,6 +120,7 @@ jQuery(document).ready(function ($)
 				album_local_url:'<?php echo JRoute::_($link); ?>',
 				album_local_title:<?php echo json_encode($item->title); ?>,
 				album_id:'<?php echo $item->id; ?>',
+				album_orig_sort:'<?php echo $item->orig_sort; ?>',
 
 				mode:'album_cover',
 				username:'<?php echo $item->params->get("userid"); ?>',
@@ -148,6 +176,11 @@ jQuery(document).ready(function ($)
 			jQuery("#container_pwi_list > ul").append(
 				author = jQuery("<li/>", {'id':'ozio-he-author<?php echo $item->id; ?>', 'class':'ozio-he-author','style':'width:<?php echo $this->Params->get("images_size", 180); ?>px'})
 			);
+			author.data('ozio-data',{
+				album_local_title:<?php echo json_encode($item->title); ?>,
+				album_id:'<?php echo $item->id; ?>',
+				album_orig_sort:'<?php echo $item->orig_sort; ?>'
+			});
 
 			// Imposta i parametri e innesca il caricamento
 			author.pwi(
@@ -156,6 +189,7 @@ jQuery(document).ready(function ($)
 					album_local_url:'<?php echo JRoute::_($link); ?>',
 					album_local_title:<?php echo json_encode($item->title); ?>,
 					album_id:'<?php echo $item->id; ?>',
+					album_orig_sort:'<?php echo $item->orig_sort; ?>',
 
 					mode:'album_cover',
 					username:'<?php echo $item->params->get("ozio_nano_userID", "110359559620842741677"); ?>',
@@ -206,6 +240,8 @@ jQuery(document).ready(function ($)
 			
 			
 			var album_nano_options={
+				album_id:'<?php echo $item->id; ?>',
+				album_orig_sort:'<?php echo $item->orig_sort; ?>',
 				album_local_title:<?php echo json_encode($item->title); ?>,
 				album_local_url:'<?php echo JRoute::_($link); ?>',
 				thumbSize:'<?php echo $this->Params->get("images_size", 180); ?>',
@@ -277,6 +313,62 @@ jQuery(document).ready(function ($)
 			document.body.style.cursor = "wait";
 		}
 
+				
+		function listsort_title_asc(a, b){
+			return jQuery(a).data('ozio-data').album_local_title.localeCompare(jQuery(b).data('ozio-data').album_local_title);
+		}
+		function listsort_title_desc(a, b){
+			return -1*jQuery(a).data('ozio-data').album_local_title.localeCompare(jQuery(b).data('ozio-data').album_local_title);
+		}
+		function listsort_id_asc(a, b)
+		{
+			if (parseInt(jQuery(a).data('ozio-data').album_id)==parseInt(jQuery(b).data('ozio-data').album_id)){
+				return 0;
+			}
+			return (parseInt(jQuery(a).data('ozio-data').album_id) < parseInt(jQuery(b).data('ozio-data').album_id)) ? -1 : 1;
+		}
+		function listsort_id_desc(a, b)
+		{
+			if (parseInt(jQuery(a).data('ozio-data').album_id)==parseInt(jQuery(b).data('ozio-data').album_id)){
+				return 0;
+			}
+			return (parseInt(jQuery(a).data('ozio-data').album_id) > parseInt(jQuery(b).data('ozio-data').album_id)) ? -1 : 1;
+		}
+		function listsort_orig_sort_asc(a, b)
+		{
+			if (parseInt(jQuery(a).data('ozio-data').album_orig_sort)==parseInt(jQuery(b).data('ozio-data').album_orig_sort)){
+				return 0;
+			}
+			return (parseInt(jQuery(a).data('ozio-data').album_orig_sort) < parseInt(jQuery(b).data('ozio-data').album_orig_sort)) ? -1 : 1;
+		}
+		function listsort_orig_sort_desc(a, b)
+		{
+			if (parseInt(jQuery(a).data('ozio-data').album_orig_sort)==parseInt(jQuery(b).data('ozio-data').album_orig_sort)){
+				return 0;
+			}
+			return (parseInt(jQuery(a).data('ozio-data').album_orig_sort) > parseInt(jQuery(b).data('ozio-data').album_orig_sort)) ? -1 : 1;
+		}
+		
+		var fsort=listsort_id_desc;
+		if (order_by=='id'){
+			if (order_dir=='desc'){
+				fsort=listsort_id_desc;
+			}else{
+				fsort=listsort_id_asc;
+			}
+		}else if (order_by=='title'){
+			if (order_dir=='desc'){
+				fsort=listsort_title_desc;
+			}else{
+				fsort=listsort_title_asc;
+			}
+		}else{
+			if (order_dir=='desc'){
+				fsort=listsort_orig_sort_desc;
+			}else{
+				fsort=listsort_orig_sort_asc;
+			}
+		}		
 		
 		function addAlbum(album,jquery_ozio_author){
 			var figure = jQuery('<a class="ozio-he-figure" href="' + album.album_local_url + '"  />');
@@ -329,20 +421,29 @@ jQuery(document).ready(function ($)
 			//jQuery('#ozio-he-author' + this.album_id).append(figure);
 			jquery_ozio_author.html('');
 			jquery_ozio_author.append(figure);
+			
+			
+			//sort div
+			$('.ozio-he-author').sort(fsort).each(function (_, container) {
+			  $(container).parent().append(container);
+			});
+			
 		}
 		
 		function OnLoadSuccess(result, textStatus, jqXHR)
 		{
 			var $thumbnail0 = result.feed.entry[0].media$group.media$thumbnail[0];
+
 			var album={
 				'title':result.feed.title.$t,
-				'thumb_url':result.feed.icon.$t/*$thumbnail0.url*/,
+				'thumb_url':$thumbnail0.url,
 				'thumb_height':$thumbnail0.height,
 				'thumb_width':$thumbnail0.width,
 				'timestamp':result.feed.gphoto$timestamp.$t,
 				'numphotos':result.feed.gphoto$numphotos.$t,
 				'album_local_url':this.album_local_url,
-				'album_local_title':this.album_local_title
+				'album_local_title':this.album_local_title,
+				'album_id':this.album_id
 			};
 			if (this.hasOwnProperty("manual_date")){
 				album.manual_date=this.manual_date;
@@ -369,6 +470,11 @@ jQuery(document).ready(function ($)
 			if (<?php echo json_encode($this->Params->get("nano_albums", "all")=="all"); ?>){
 				for (var i=0;i<nanoAlbums.length;i++){
 					var author = jQuery("<li/>", {'class':'ozio-he-author','style':'width:<?php echo $this->Params->get("images_size", 180); ?>px'});
+					author.data('ozio-data',{
+						album_local_title:nanoAlbums[i].album_local_title,
+						album_id:nanoAlbums[i].album_id,
+						album_orig_sort:nanoAlbums[i].album_orig_sort
+					});
 					jQuery("#container_pwi_list > ul").append(author);
 					addAlbum(nanoAlbums[i],author);
 					
@@ -386,11 +492,17 @@ jQuery(document).ready(function ($)
 				if (last_album!==null){
 					last_album.album_local_url=last_album.album_real_local_url;
 					var author = jQuery("<li/>", {'class':'ozio-he-author','style':'width:<?php echo $this->Params->get("images_size", 180); ?>px'});
+					author.data('ozio-data',{
+						album_local_title:last_album.album_local_title,
+						album_id:last_album.album_id,
+						album_orig_sort:last_album.album_orig_sort
+					});
 					jQuery("#container_pwi_list > ul").append(author);
 					addAlbum(last_album,author);
 				}
 			
 			}
+			nanoAlbums=[];//lo svuoto
 		}
 		 
 		function addAlbumNano(album){
@@ -448,7 +560,9 @@ jQuery(document).ready(function ($)
 									'numphotos':data.gphoto$numphotos.$t,
 									'album_local_url':context.album_local_url+deeplink,
 									'album_local_title':context.album_local_title,
-									'album_real_local_url':context.album_local_url
+									'album_real_local_url':context.album_local_url,
+									'album_id':context.album_id,
+									'album_orig_sort':context.album_orig_sort
 								};
 				  			
 							    addAlbumNano(album);
@@ -498,7 +612,9 @@ jQuery(document).ready(function ($)
 									'numphotos':item.photos,
 									'album_local_url':context.album_local_url+deeplink,
 									'album_local_title':context.album_local_title,
-									'album_real_local_url':context.album_local_url
+									'album_real_local_url':context.album_local_url,
+									'album_id':context.album_id,
+									'album_orig_sort':context.album_orig_sort
 								};
 				  			
 							    addAlbumNano(album);

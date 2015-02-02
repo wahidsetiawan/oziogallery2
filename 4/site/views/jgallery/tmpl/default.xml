@@ -151,9 +151,23 @@
 				<option value="right">COM_OZIOGALLERY3_JGALLERY_THUMBPOS_RIGHT</option>
 			</field>
 
+			<field type="list" name="thumbType" label="COM_OZIOGALLERY3_JGALLERY_THUMBTYPE_LBL" description="COM_OZIOGALLERY3_JGALLERY_THUMBTYPE_DSC" default="image">
+				<option value="image">COM_OZIOGALLERY3_JGALLERY_THUMBTYPE_IMAGE</option>
+				<option value="square">COM_OZIOGALLERY3_JGALLERY_THUMBTYPE_SQUARE</option>
+				<option value="number">COM_OZIOGALLERY3_JGALLERY_THUMBTYPE_NUMBER</option>
+			</field>
+			
+			
 			<field name="backgroundColor" type="color" default="#fff" label="COM_OZIOGALLERY3_JGALLERY_BGCOLOR_LBL"	description="COM_OZIOGALLERY3_JGALLERY_BGCOLOR_DSC" />
 			<field name="textColor" type="color" default="#000" label="COM_OZIOGALLERY3_JGALLERY_TXTCOLOR_LBL"	description="COM_OZIOGALLERY3_JGALLERY_TXTCOLOR_DSC" />
 
+			
+			
+			
+			<field type="text" name="transitionCols" label="COM_OZIOGALLERY3_TRANSITIONCOLS_LBL" description="COM_OZIOGALLERY3_TRANSITIONCOLS_DSC" size="6" default="1"/>
+			<field type="text" name="transitionRows" label="COM_OZIOGALLERY3_TRANSITIONROWS_LBL" description="COM_OZIOGALLERY3_TRANSITIONROWS_DSC" size="6" default="1"/>
+			
+			
 			
 			<field type="ossheader" default="COM_OZIOGALLERY3_MAP_MARKERS_OPTIONS" icon="marker-16.png"/>
 			<field name="markers_icon" type="filelist" label="COM_OZIOGALLERY3_MAP_MARKERS_ICON_LBL" description="COM_OZIOGALLERY3_MAP_MARKERS_ICON_DSC" default="" hide_none="true" directory="components/com_oziogallery3/views/map/img/markers/icons" filter="\.png$" exclude="" stripext=""  onchange="OnMarkersIconChange()"/>
