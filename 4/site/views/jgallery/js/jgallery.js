@@ -2109,13 +2109,19 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
 			//GI next prev
 			var $nexta=$a.next();
 			if ($nexta.length>0){
-				this.jGallery.preloadNext = new Image();
-				this.jGallery.preloadNext.src=$nexta.attr( 'href' );
+				//this.jGallery.preloadNext = new Image();
+				//this.jGallery.preloadNext.src=$nexta.attr( 'href' );
+				if ( ! self.isLoaded( $nexta ) ) {
+					this.appendPhoto( $nexta );
+				}
 			}
 			var $preva=$a.prev();
 			if ($preva.length>0){
-				this.jGallery.preloadPrev = new Image();
-				this.jGallery.preloadPrev.src=$preva.attr( 'href' );
+				//this.jGallery.preloadPrev = new Image();
+				//this.jGallery.preloadPrev.src=$preva.attr( 'href' );
+				if ( ! self.isLoaded( $preva ) ) {
+					this.appendPhoto( $preva );
+				}
 			}
 			//GI next prev
 
