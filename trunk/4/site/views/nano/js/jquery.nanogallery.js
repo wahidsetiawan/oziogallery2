@@ -1264,6 +1264,10 @@ this.thumbImgHeight = 0;           // thumbnail image height
       if( isAnimating ) { return; }
 
       if( g_pgMaxLinesPerPage > 0 && SettingsGetTnHeight() != 'auto' && SettingsGetTnWidth() != 'auto' ) {
+		if (gO.paginationDisableSwipe==1){//GI
+			return;
+		}
+		  
         if( Math.abs(initialTouchPos.x - lastTouchPos.x) > 15 || onlyX ) {
           e.preventDefault(); // if swipe horizontaly the gallery, avoid moving page also
           onlyX=true;
@@ -1404,6 +1408,12 @@ this.thumbImgHeight = 0;           // thumbnail image height
           initialTouchPos=null;
           lastTouchPos=null;
           ThumbnailHoverOutAll();
+		  
+	  		if (gO.paginationDisableSwipe==1){//GI
+				return;
+			}
+
+		  
           if( differenceInX < -30 ) {
             paginationPreviousPage();
           }
@@ -2935,6 +2945,11 @@ this.thumbImgHeight = 0;           // thumbnail image height
     var nb=0,
     albumID=gI[albumIdx].GetID();
     
+	var gAlbumTitle='';
+	if (data.feed && data.feed.title && data.feed.title.$t){
+		gAlbumTitle=data.feed.title.$t;
+	}
+	
     var source = data.feed.entry;
     var sortOrder=gO.albumSorting;
     if (kind =='image'){
@@ -3082,7 +3097,11 @@ this.thumbImgHeight = 0;           // thumbnail image height
           newItem.infobox.album='-na-';
           if (gI[albumIdx].title!=''){
         	  newItem.infobox.album=gI[albumIdx].title;
-          }
+          }else if (gAlbumTitle!=''){
+        	  newItem.infobox.album=gAlbumTitle;
+		  }
+		  
+		  
           
           newItem.infobox.photo='-na-';
           if (data.summary.$t!=''){
@@ -3653,7 +3672,7 @@ this.thumbImgHeight = 0;           // thumbnail image height
     });
     var w=(((colHeight.length)*(tnW+gutterWidth))-gutterWidth);
     curRow=0;
-
+	curCol=0;
     // second loop to position the thumbnails
     $thumbnails.each(function() {
       var $this=jQuery(this),
@@ -4121,16 +4140,25 @@ this.thumbImgHeight = 0;           // thumbnail image height
     if( g_pgMaxLinesPerPage > 0 && SettingsGetTnHeight() != 'auto' && SettingsGetTnWidth() != 'auto' ) {
       n2=Math.ceil(gI[albumIdx].contentLength/(g_pgMaxLinesPerPage*g_pgMaxNbThumbnailsPerRow));
     }
+	
+	var pagNumElements=gO.paginationNumSelectable;//GI
+	
+	var pagNumElements_2=Math.floor(pagNumElements/2);
+	
 
-    if( pageNumber >= 5 ) {
-      firstPage=pageNumber-5;
-      if( n2 > pageNumber+6 ) {
-        n2=pageNumber+6;
-      }
+    if( pageNumber >= pagNumElements_2 ) {
+      firstPage=pageNumber-pagNumElements_2;
+	  if (n2 > firstPage+pagNumElements){
+		  n2=firstPage+pagNumElements;
+	  }
+	  
+      //if( n2 > pageNumber+pagNumElements_2+1 ) {
+      //  n2=pageNumber+pagNumElements_2+1;
+      //}
     }
     else {
-      if( n2 > 10 ) {
-        n2=10;
+      if( n2 > pagNumElements ) {
+        n2=pagNumElements;
       }
     }
     
@@ -4403,7 +4431,8 @@ this.thumbImgHeight = 0;           // thumbnail image height
     }
     else {
       // IMAGE
-      if( gO.thumbnailLabel.display == true ) {
+		//GI
+      if( gO.thumbnailLabelL2_display == true && gO.thumbnailLabel.display == true ) {
         if( foundDesc && sDesc.length == 0 && gO.thumbnailLabel.position == 'onBottom' ) { sDesc='&nbsp;'; }
         //newElt[newEltIdx++]='<div class="labelImage" style="width:'+gO.thumbnailWidth+'px;max-height:'+gO.thumbnailHeight+'px;"><div class="labelImageTitle labelTitle" >'+sTitle+'</div><div class="labelDescription" >'+sDesc+'</div></div>';
         newElt[newEltIdx++]='<div class="labelImage" style="width:'+SettingsGetTnWidth()+'px;'+(gO.RTL ? "direction:RTL;" :"")+'"><div class="labelImageTitle labelTitle" >'+sTitle+'</div><div class="labelDescription" >'+sDesc+'</div></div>';
@@ -9098,6 +9127,7 @@ colors = jQuery.Color.names = {
 		return this;
 	};
 
+	
 	/**
 	 * Alias of removeEvent.
 	 *

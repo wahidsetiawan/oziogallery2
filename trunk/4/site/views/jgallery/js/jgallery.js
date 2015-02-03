@@ -2398,6 +2398,8 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             this.$changeMode.removeClass( 'fa-expand' ).addClass( 'fa-compress' );
             this.jGallery.options.mode = 'full-screen';
             this.jGallery.refreshDimensions();
+
+			this.$title.show();
         },
 
         goToStandardMode: function() {
@@ -2412,6 +2414,11 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             this.$changeMode.removeClass( 'fa-compress' ).addClass( 'fa-expand' );
             this.jGallery.options.mode = 'standard';
             this.jGallery.refreshDimensions();
+
+			//se multialbum
+			if (this.jGallery.booIsAlbums){
+				this.$title.hide();
+			}
         }
     };
     
@@ -2576,6 +2583,14 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                     'overflow': 'hidden'
                 } );
             }
+			
+			if (this.options.mode == 'standard'){
+				//se multialbum
+				if (this.booIsAlbums){
+					this.zoom.$title.hide();
+				}
+			}
+			
             this.$element.not( ':visible' ).removeClass( 'hidden' ).stop( false, true ).fadeIn( 500 );
             this.zoom.refreshContainerSize();
             this.zoom.$title.removeClass( 'hidden' );  
@@ -2920,6 +2935,8 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                 height: height
             } );
             this.options.draggableZoomHideNavigationOnMobile ? this.$jgallery.addClass( 'jgallery-hide-draggable-navigation-on-mobile' ) : this.$jgallery.removeClass( 'jgallery-hide-draggable-navigation-on-mobile' );
+			
+			
         },
 
         refreshAttrClasses: function() {

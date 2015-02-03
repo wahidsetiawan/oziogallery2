@@ -28,6 +28,7 @@ jQuery( document ).ready(function( $ ) {
 			echo json_encode($ozio_nano_paginationMaxLinesPerPage); 
 		
 		?>,
+		
 		thumbnailDisplayInterval: 0,
 		thumbnailDisplayTransition: 1,
 		thumbnailLazyLoad: <?php echo json_encode(intval($this->Params->get("ozio_nano_thumbnailLazyLoad", "1"))); ?>,
@@ -118,6 +119,11 @@ jQuery( document ).ready(function( $ ) {
 		whiteList: <?php echo json_encode($this->Params->get("ozio_nano_whiteList", "")); ?>,
 		photoSorting: <?php echo json_encode($this->Params->get("ozio_nano_photoSorting", "standard")); ?>,
 		albumSorting: <?php echo json_encode($this->Params->get("ozio_nano_albumSorting", "standard")); ?>,
+		
+		thumbnailLabelL2_display: <?php echo json_encode(intval($this->Params->get("ozio_nano_thumbnailLabelL2_display", "1"))); ?>,
+		paginationDisableSwipe: <?php echo json_encode(intval($this->Params->get("ozio_nano_paginationDisableSwipe", "0"))); ?>,
+		paginationNumSelectable: <?php echo json_encode(intval($this->Params->get("ozio_nano_paginationNumSelectable", "10"))); ?>,
+		
 		<?php
 		$kind=$this->Params->get("ozio_nano_kind", "picasa");
 		$albumvisibility=$this->Params->get("albumvisibility", "public");
