@@ -245,7 +245,8 @@ jQuery(document).ready(function ($)
 				album_local_url:'<?php echo JRoute::_($link); ?>',
 				thumbSize:'<?php echo $this->Params->get("images_size", 180); ?>',
 				g_flickrApiKey:"2f0e634b471fdb47446abcb9c5afebdc",
-				locationHash: <?php echo json_encode(strpos($item->link, "&view=jgallery") === false?intval($item->params->get("ozio_nano_locationHash", "1")):0); ?>,
+				locationHash: <?php echo json_encode(intval($item->params->get("ozio_nano_locationHash", "1"))); ?>,
+				skin:<?php echo json_encode(strpos($item->link, "&view=jgallery") === false?"nano":"jgallery"); ?>,
 				kind: <?php echo json_encode($item->params->get("ozio_nano_kind", "picasa")); ?>,
 				userID: <?php echo json_encode($item->params->get("ozio_nano_userID", "110359559620842741677")); ?>,
 				blackList: <?php echo json_encode($item->params->get("ozio_nano_blackList", "Scrapbook|profil|2013-")); ?>,
@@ -585,14 +586,19 @@ jQuery(document).ready(function ($)
 			        }
 
 			        if( ok ) {
-			        		var deeplink='';
-			        		if (context.locationHash){
-			        			deeplink='#nanogallery/nanoGallery/'+itemID;
-			        		}
 				            src=itemID;
 				            var s=itemThumbURL.substring(0, itemThumbURL.lastIndexOf('/'));
 				            s=s.substring(0, s.lastIndexOf('/')) + '/';
 				  			itemThumbURL=s+'s'+context.thumbSize+'-c/';
+
+			        		var deeplink='';
+			        		if (context.locationHash){
+								if (context.skin=='nano'){
+									deeplink='#nanogallery/nanoGallery/'+itemID;
+								}else{
+									deeplink='#'+s;
+								}
+			        		}
 				            
 							var album={
 									'title':itemTitle,

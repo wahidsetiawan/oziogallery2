@@ -499,6 +499,14 @@ jQuery( document ).ready(function( $ ) {
 			if (multi_album){
 				var halbum=$('<div class="album"></div>');
 				halbum.attr("data-jgallery-album-title",g_parameters[this.album_index].title);
+				
+				var album_data={
+					album_title:g_parameters[this.album_index].title,
+					album_id:g_parameters[this.album_index]['params']['gallery_id'],
+					album_orig_sort:this.album_index
+				};
+				
+				halbum.data('ozio-jgallery-data',album_data);				
 				jgallery.append(halbum);
 				jcontainer=halbum;
 			}
@@ -542,6 +550,75 @@ jQuery( document ).ready(function( $ ) {
 			num_album_to_load--;
 			
 			if (num_album_to_load==0){
+				//Sort album
+				
+				if (multi_album){
+					
+					<?php
+					echo "var order_by=".json_encode($this->Params->get("ozio_nano_albumSorting", "standard")).";\n";
+					?>
+					
+					function listsort_title_asc(a, b){
+						return jQuery(a).data('ozio-jgallery-data').album_title.localeCompare(jQuery(b).data('ozio-jgallery-data').album_title);
+					}
+					function listsort_title_desc(a, b){
+						return -1*jQuery(a).data('ozio-jgallery-data').album_title.localeCompare(jQuery(b).data('ozio-jgallery-data').album_title);
+					}
+					function listsort_id_asc(a, b)
+					{
+						if (parseInt(jQuery(a).data('ozio-jgallery-data').album_id)==parseInt(jQuery(b).data('ozio-jgallery-data').album_id)){
+							return 0;
+						}
+						return (parseInt(jQuery(a).data('ozio-jgallery-data').album_id) < parseInt(jQuery(b).data('ozio-jgallery-data').album_id)) ? -1 : 1;
+					}
+
+					function listsort_orig_sort_asc(a, b)
+					{
+						if (parseInt(jQuery(a).data('ozio-jgallery-data').album_orig_sort)==parseInt(jQuery(b).data('ozio-jgallery-data').album_orig_sort)){
+							return 0;
+						}
+						return (parseInt(jQuery(a).data('ozio-jgallery-data').album_orig_sort) < parseInt(jQuery(b).data('ozio-jgallery-data').album_orig_sort)) ? -1 : 1;
+					}
+					function listsort_orig_sort_desc(a, b)
+					{
+						if (parseInt(jQuery(a).data('ozio-jgallery-data').album_orig_sort)==parseInt(jQuery(b).data('ozio-jgallery-data').album_orig_sort)){
+							return 0;
+						}
+						return (parseInt(jQuery(a).data('ozio-jgallery-data').album_orig_sort) > parseInt(jQuery(b).data('ozio-jgallery-data').album_orig_sort)) ? -1 : 1;
+					}
+					function listsort_random_sort(a, b)
+					{
+						var r=Math.random();
+						if (r<=0.33)return -1;
+						if (r<=0.66)return 0;
+						return 1;
+					}
+					
+					var fsort=listsort_orig_sort_asc;
+					if (order_by=='id'){
+						fsort=listsort_id_asc;
+					}else if (order_by=='titleAsc'){
+						fsort=listsort_title_asc;
+					}else if (order_by=='titleAsc'){
+						fsort=listsort_title_desc;
+					}else if (order_by=='reversed'){
+						fsort=listsort_orig_sort_desc;
+					}else if (order_by=='random'){
+						fsort=listsort_orig_sort_desc;
+					}else{
+						//standard
+						fsort=listsort_orig_sort_asc;
+					}						
+					$('#jgallery > .album').sort(fsort).each(function (_, container) {
+					  $(container).parent().append(container);
+					});
+				}		
+				
+				//Fine sort album
+				
+				
+				
+				
 				
 				jgallery.jGallery({
 					
@@ -569,6 +646,10 @@ jQuery( document ).ready(function( $ ) {
 					transitionRows: <?php echo json_encode(intval($this->Params->get("transitionRows", 1))); ?>,
 					thumbType: <?php echo json_encode($this->Params->get("thumbType", "image")); ?>,
 					
+					canZoom: <?php echo json_encode(intval($this->Params->get("canZoom", "1"))==1); ?>,
+					canChangeMode: <?php echo json_encode(intval($this->Params->get("canChangeMode", "1"))==1); ?>,
+					title: <?php echo json_encode(intval($this->Params->get("title", "1"))==1); ?>,
+					browserHistory: <?php echo json_encode(intval($this->Params->get("ozio_nano_locationHash", "1"))==1); ?>,
 					
 					
 					photoData: g_photo_data,

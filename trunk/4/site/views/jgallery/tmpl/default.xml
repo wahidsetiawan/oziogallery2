@@ -54,6 +54,16 @@
 				<option value="inverse">COM_OZIOGALLERY3_PHOTOSORTING_INVERSE</option>
 			</field>
 			
+			<field type="list" name="ozio_nano_albumSorting" label="COM_OZIOGALLERY3_OZIO_NANO_ALBUMSORTING_LBL" description="COM_OZIOGALLERY3_OZIO_NANO_ALBUMSORTING_DSC" default="standard">
+				<option value="standard">COM_OZIOGALLERY3_OZIO_NANO_PHOTOSORTING_NORMAL</option>
+				<option value="random">COM_OZIOGALLERY3_OZIO_NANO_PHOTOSORTING_RANDOM</option>
+				<option value="reversed">COM_OZIOGALLERY3_OZIO_NANO_PHOTOSORTING_INVERSE</option>
+				<option value="titleAsc">COM_OZIOGALLERY3_OZIO_NANO_PHOTOSORTING_TITLEASC</option>
+				<option value="titleDesc">COM_OZIOGALLERY3_OZIO_NANO_PHOTOSORTING_TITLEDESC</option>
+				<option value="id">COM_OZIOGALLERY3_OZIO_NANO_PHOTOSORTING_ID</option>
+			</field>
+			
+			
 			<field name="bottom_description" type="textarea" default="" label="COM_OZIOGALLERY3_BOTTOM_DESCRIPTION_LBL" description="COM_OZIOGALLERY3_BOTTOM_DESCRIPTION_DSC" rows="10" cols="5" filter="safehtml" />
 			
 			
@@ -155,8 +165,7 @@
 				<option value="image">COM_OZIOGALLERY3_JGALLERY_THUMBTYPE_IMAGE</option>
 				<option value="square">COM_OZIOGALLERY3_JGALLERY_THUMBTYPE_SQUARE</option>
 				<option value="number">COM_OZIOGALLERY3_JGALLERY_THUMBTYPE_NUMBER</option>
-			</field>
-			
+			</field>			
 			
 			<field name="backgroundColor" type="color" default="#fff" label="COM_OZIOGALLERY3_JGALLERY_BGCOLOR_LBL"	description="COM_OZIOGALLERY3_JGALLERY_BGCOLOR_DSC" />
 			<field name="textColor" type="color" default="#000" label="COM_OZIOGALLERY3_JGALLERY_TXTCOLOR_LBL"	description="COM_OZIOGALLERY3_JGALLERY_TXTCOLOR_DSC" />
@@ -167,6 +176,32 @@
 			<field type="text" name="transitionCols" label="COM_OZIOGALLERY3_TRANSITIONCOLS_LBL" description="COM_OZIOGALLERY3_TRANSITIONCOLS_DSC" size="6" default="1"/>
 			<field type="text" name="transitionRows" label="COM_OZIOGALLERY3_TRANSITIONROWS_LBL" description="COM_OZIOGALLERY3_TRANSITIONROWS_DSC" size="6" default="1"/>
 			
+
+		  
+			<field type="radio" name="canZoom" default="1"
+				label="COM_OZIOGALLERY3_JGALLERY_CANZOOM_LBL"
+				description="COM_OZIOGALLERY3_JGALLERY_CANZOOM_DSC"
+				class="btn-group btn-group-yesno">
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+		  
+			<field type="radio" name="canChangeMode" default="1"
+				label="COM_OZIOGALLERY3_JGALLERY_CANCHANGEMODE_LBL"
+				description="COM_OZIOGALLERY3_JGALLERY_CANCHANGEMODE_DSC"
+				class="btn-group btn-group-yesno">
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+
+			<field type="radio" name="title" default="1"
+				label="COM_OZIOGALLERY3_JGALLERY_SHOW_TITLE_LBL"
+				description="COM_OZIOGALLERY3_JGALLERY_SHOW_TITLE_DSC"
+				class="btn-group btn-group-yesno">
+				<option value="1">JYES</option>
+				<option value="0">JNO</option>
+			</field>
+					
 			
 			
 			<field type="ossheader" default="COM_OZIOGALLERY3_MAP_MARKERS_OPTIONS" icon="marker-16.png"/>
@@ -174,11 +209,13 @@
 	        <field name="markers_preview" type="markerpreview" label="COM_OZIOGALLERY3_MAP_MARKERS_PREVIEW"/>
 		  
 		  
-
-		
 		</fieldset>			
 		<fieldset name="advanced">
 			<field type="list" name="load_css_bootstrap" label="COM_OZIOGALLERY3_LOAD_CSS_BOOTSTRAP_LBL" description="COM_OZIOGALLERY3_LOAD_CSS_BOOTSTRAP_DSC" default="0">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+			<field type="list" name="ozio_nano_locationHash" label="COM_OZIOGALLERY3_OZIO_NANO_LOCATIONHASH_LBL" description="COM_OZIOGALLERY3_OZIO_NANO_LOCATIONHASH_DSC" default="1">
 				<option value="0">JNO</option>
 				<option value="1">JYES</option>
 			</field>

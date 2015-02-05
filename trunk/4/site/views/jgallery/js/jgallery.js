@@ -2323,10 +2323,16 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         },
 
         showPhotoByPath: function( path ) {
-            var $a = this.thumbnails.$albums.filter( '.active' ).find( 'a[href="' + path + '"]' );
+
+			//GI hash
+			path=path.replace(/w[0-9]+\/$/, '');
+			
+            //var $a = this.thumbnails.$albums.filter( '.active' ).find( 'a[href="' + path + '"]' );
+            var $a = this.thumbnails.$albums.filter( '.active' ).find( 'a[href^="' + path + '"]' );
 
             if ( $a.length === 0 ) {
-                $a = this.thumbnails.$a.filter( 'a[href="' + path + '"]' ).eq( 0 );
+                //$a = this.thumbnails.$a.filter( 'a[href="' + path + '"]' ).eq( 0 );
+                $a = this.thumbnails.$a.filter( 'a[href^="' + path + '"]' ).eq( 0 );
             }
             if ( $a.length === 0 ) {
                 return;

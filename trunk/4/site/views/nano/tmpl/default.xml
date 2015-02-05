@@ -303,7 +303,7 @@
 			<field type="hidden" name="ozio_nano_paginationMaxItemsPerPage" label="COM_OZIOGALLERY3_OZIO_NANO_PAGINATIONMAXITEMSPERPAGE_LBL" description="COM_OZIOGALLERY3_OZIO_NANO_PAGINATIONMAXITEMSPERPAGE_DSC" size="6" default="0"/>
 -->
 			<field type="text" name="ozio_nano_paginationMaxLinesPerPage" label="COM_OZIOGALLERY3_OZIO_NANO_PAGINATIONMAXLINESPERPAGE_LBL" description="COM_OZIOGALLERY3_OZIO_NANO_PAGINATIONMAXLINESPERPAGE_DSC" size="6" default="0"/>
-			
+			<!--
 			<field type="radio" name="ozio_nano_paginationDisableSwipe" default="0"
 				label="COM_OZIOGALLERY3_OZIO_NANO_PAGINATIONDISABLESWIPE_LBL"
 				description="COM_OZIOGALLERY3_OZIO_NANO_PAGINATIONDISABLESWIPE_DSC"
@@ -311,7 +311,7 @@
 				<option value="1">JYES</option>
 				<option value="0">JNO</option>
 			</field>
-			
+			-->
 			<field type="text" name="ozio_nano_paginationNumSelectable" label="COM_OZIOGALLERY3_OZIO_NANO_PAGINATIONNUMSELECTABLE_LBL" description="COM_OZIOGALLERY3_OZIO_NANO_PAGINATIONNUMSELECTABLE_DSC" size="6" default="10"/>
 			
 			
