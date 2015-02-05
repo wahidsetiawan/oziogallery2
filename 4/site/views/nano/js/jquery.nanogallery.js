@@ -1197,6 +1197,9 @@ this.thumbImgHeight = 0;           // thumbnail image height
     
     // Handle the start of gestures
     this.handleGestureStart = function(e) {
+		
+		gO.paginationDisableSwipe=jQuery(window).width()<=768;//GI
+		
       if( g_containerViewerDisplayed ) { 
         e.stopPropagation();
         e.eventDefault();
@@ -1264,7 +1267,8 @@ this.thumbImgHeight = 0;           // thumbnail image height
       if( isAnimating ) { return; }
 
       if( g_pgMaxLinesPerPage > 0 && SettingsGetTnHeight() != 'auto' && SettingsGetTnWidth() != 'auto' ) {
-		if (gO.paginationDisableSwipe==1){//GI
+		  
+		if (gO.paginationDisableSwipe){//GI
 			return;
 		}
 		  

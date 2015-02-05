@@ -121,7 +121,8 @@ jQuery( document ).ready(function( $ ) {
 		albumSorting: <?php echo json_encode($this->Params->get("ozio_nano_albumSorting", "standard")); ?>,
 		
 		thumbnailLabelL2_display: <?php echo json_encode(intval($this->Params->get("ozio_nano_thumbnailLabelL2_display", "1"))); ?>,
-		paginationDisableSwipe: <?php echo json_encode(intval($this->Params->get("ozio_nano_paginationDisableSwipe", "0"))); ?>,
+		//paginationDisableSwipe: <?php echo json_encode(intval($this->Params->get("ozio_nano_paginationDisableSwipe", "0"))); ?>,
+		paginationDisableSwipe: false,
 		paginationNumSelectable: <?php echo json_encode(intval($this->Params->get("ozio_nano_paginationNumSelectable", "10"))); ?>,
 		
 		<?php

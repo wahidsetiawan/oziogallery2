@@ -546,7 +546,7 @@ jQuery(document).ready(function ($)
 				if (g_parameters[obj.album_index].skin=='00fuerte'){
 					photolink=g_parameters[obj.album_index].link+'#'+(obj.photo_index+1);
 				}else if (g_parameters[obj.album_index].skin=='jgallery'){
-					photolink=g_parameters[obj.album_index].link;
+					photolink=g_parameters[obj.album_index].link+'#'+seed;
 				}else{
 					photolink=g_parameters[obj.album_index].link+'/'+entry.gphoto$id.$t;
 				}
