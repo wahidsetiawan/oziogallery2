@@ -3053,7 +3053,7 @@ this.thumbImgHeight = 0;           // thumbnail image height
 
       var ok=true;
       if( kind == 'album' ) {
-        if( !CheckAlbumName(itemTitle, itemID) ) { ok=false; }
+        if( !CheckAlbumName(itemTitle, itemID) || data.gphoto$numphotos.$t==0) { ok=false; }
 	  }else{
   		var seed = data.content.src.substring(0, data.content.src.lastIndexOf("/"));
 		seed = seed.substring(0, seed.lastIndexOf("/")) + "/";

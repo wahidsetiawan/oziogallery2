@@ -127,7 +127,7 @@ jQuery( document ).ready(function( $ ) {
 							ok=JGalleryCheckAlbumName(itemTitle,context);
 						}
 
-						if( ok ) {
+						if( ok && data.gphoto$numphotos.$t>0) {
 								if (viewer_mode=='slider' && g_parameters.length==1){
 									//se slider solo1
 								}else{

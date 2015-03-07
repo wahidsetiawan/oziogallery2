@@ -1257,6 +1257,9 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
                     }
                 }
             }
+			//TODO!!!!
+			//GI
+			/*
             $a.jLoader( {
                 start: function() {
                     $a.overlay( {
@@ -1272,6 +1275,7 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
                     } );
                 }
             } );
+			*/
             $container.children( ':last-child' ).attr( 'data-jgallery-photo-id', this.intI++ ).attr( 'data-jgallery-number', this.intNo++ );
         },
 
@@ -1592,6 +1596,9 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         },
 
         refreshSize: function() {
+			if (!this.giEnableRefresh){
+				return;
+			}
             if ( this.thumbnails.isFullScreen() ) {
                 return;
             }
@@ -2137,7 +2144,14 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                 this.setRandomTransition();
             }
             else if ( transitionName === 'auto' ) {
-                transition = jGalleryTransitions[ jGalleryBackwardTransitions[ this.jGallery.options[ 'transition' ] ] ];
+				//GI
+				if (   this.jGallery.options[ 'transition' ]=='random'){
+					var r = Math.floor( ( Math.random() * jGalleryArrayTransitions.length ) );
+					transition = jGalleryArrayTransitions[ r ];
+				}else{
+					transition = jGalleryTransitions[ jGalleryBackwardTransitions[ this.jGallery.options[ 'transition' ] ] ];
+				}	
+				//end GI
                 this.advancedAnimation.setHideEffect( transition[0] );
                 this.advancedAnimation.setShowEffect( transition[1] );
             }
@@ -2393,10 +2407,16 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         },
 
         goToFullScreenMode: function() {
+			//GI fullscreen
+			this.jGallery.$element.appendTo(jQuery('body'));
+			//GI fullscreen
+			
             $body.css( {
                 overflow: 'hidden'
             } );
+			
             this.jGallery.$this.show();
+			
             this.jGallery.$element.removeClass( 'jgallery-standard' ).addClass( 'jgallery-full-screen' ).css( {
                 width: 'auto',
                 height: 'auto'
@@ -2409,10 +2429,16 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         },
 
         goToStandardMode: function() {
+			//GI fullscreen
+			this.jGallery.$element.insertAfter(jQuery('#jgallery'));
+			//GI fullscreen
+
             $body.css( {
                 overflow: 'visible'
             } );
             this.jGallery.$this.hide();
+			
+			
             this.jGallery.$element.removeClass( 'jgallery-full-screen' ).addClass( 'jgallery-standard' ).css( {
                 width: this.jGallery.options.width,
                 height: this.jGallery.options.height
@@ -2722,6 +2748,7 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
         },
 
         init: function( options ) {
+			//console.log("init "+new Date());
             var self = this;
             
             options = $.extend( {
@@ -2828,11 +2855,16 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                         }
                     } );  
 
+					//GI enableRefresh
+					self.zoom.giEnableRefresh=true;
+					
                     self.thumbnails.bindEvents();      
                     options.success();
                 }
             } );
             this.refreshCssClassJGalleryMobile();
+			//console.log("done "+new Date());
+
         },
 
         isSlider: function() {
@@ -2972,6 +3004,9 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
 
                     if ( mode === 'full-screen' ) {
                         self.$jgallery = self.$this.after( html ).next();
+						//GI fullscreen
+						self.$jgallery.appendTo(jQuery('body'));
+						//GI fullscreen
                     }
                     else {
                         if ( options.autostart ) {
