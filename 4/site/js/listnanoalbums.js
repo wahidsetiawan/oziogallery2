@@ -157,15 +157,18 @@ jQuery( document ).ready(function( $ ) {
   function PicasaParseData( data ) {
 	var albums=[];
     jQuery.each(data.feed.entry, function(i,data){
-		//Get the title 
-		var itemTitle = data.media$group.media$title.$t;
-		//Get the ID 
-		var itemID = data.id.$t;
-		itemID = itemID.split('/')[9].split('?')[0];
-		albums.push({
-			'id':itemID,
-			'title':itemTitle
-		});
+		console.log(data.gphoto$numphotos.$t+" "+data.media$group.media$title.$t);
+		if (data.gphoto$numphotos.$t>0){
+			//Get the title 
+			var itemTitle = data.media$group.media$title.$t;
+			//Get the ID 
+			var itemID = data.id.$t;
+			itemID = itemID.split('/')[9].split('?')[0];
+			albums.push({
+				'id':itemID,
+				'title':itemTitle
+			});
+		}
       
     });
 	gi_update_listnanoalbums_callback(albums);	

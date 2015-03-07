@@ -121,6 +121,7 @@ jQuery(document).ready(function ($)
 				album_local_title:<?php echo json_encode($item->title); ?>,
 				album_id:'<?php echo $item->id; ?>',
 				album_orig_sort:'<?php echo $item->orig_sort; ?>',
+				album_photo_sort:<?php echo json_encode($item->params->get("photoSorting","normal")); ?>,
 
 				mode:'album_cover',
 				username:'<?php echo $item->params->get("userid"); ?>',
@@ -190,6 +191,7 @@ jQuery(document).ready(function ($)
 					album_local_title:<?php echo json_encode($item->title); ?>,
 					album_id:'<?php echo $item->id; ?>',
 					album_orig_sort:'<?php echo $item->orig_sort; ?>',
+					album_photo_sort:<?php echo json_encode(strpos($item->link, "&view=jgallery") === false?$item->params->get("ozio_nano_photoSorting","standard"):$item->params->get("photoSorting","normal")); ?>,
 
 					mode:'album_cover',
 					username:'<?php echo $item->params->get("ozio_nano_userID", "110359559620842741677"); ?>',
@@ -244,6 +246,7 @@ jQuery(document).ready(function ($)
 				album_orig_sort:'<?php echo $item->orig_sort; ?>',
 				album_local_title:<?php echo json_encode($item->title); ?>,
 				album_local_url:'<?php echo JRoute::_($link); ?>',
+				album_photo_sort:<?php echo json_encode(strpos($item->link, "&view=jgallery") === false?$item->params->get("ozio_nano_photoSorting","standard"):$item->params->get("photoSorting","normal")); ?>,
 				thumbSize:'<?php echo $this->Params->get("images_size", 180); ?>',
 				g_flickrApiKey:"2f0e634b471fdb47446abcb9c5afebdc",
 				locationHash: <?php echo json_encode(intval($item->params->get("ozio_nano_locationHash", "1"))); ?>,
@@ -371,6 +374,107 @@ jQuery(document).ready(function ($)
 			}
 		}		
 		
+		
+		
+		function addAlbumSortPhoto(album,jquery_ozio_author){
+			if (album.username && album.albumid){
+				var context={'settings':album,'element':jquery_ozio_author};
+				pwi_load_album_data(context,1);
+			}else{
+				addAlbum(album,jquery_ozio_author);
+			}
+		}
+			
+		function pwi_load_album_data(context,start_index){
+			
+			if (start_index==1){
+				context['settings'].photos=[];
+			}
+
+			var thumbSize=parseInt('<?php echo $this->Params->get("images_size", 180); ?>');
+			
+			var url = "https://photos.googleapis.com/data/feed/api/user/" + context['settings'].username +  '/albumid/' + context['settings'].albumid  +
+				'?imgmax=d' +
+				'&alt=json' +
+				((context['settings'].authkey !== "") ? "&authkey=Gv1sRg" + context['settings'].authkey : "") +
+				'&thumbsize=' + thumbSize + "c" + "," + thumbSize + "&start-index=" + start_index ;
+				
+
+			$.ajax({
+				'url':url,
+				'dataType': 'json', // Esplicita il tipo perche' il riconoscimento automatico non funziona con Firefox
+				'success':pwi_load_album_data_success,
+				'context':context
+			});			
+			
+			
+		}		
+		  function pwiAreaShuffle(o){ //v1.0
+			  for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+			  return o;
+		  };
+		function pwi_load_album_data_success(result, textStatus, jqXHR)
+		{
+			context=this;
+			for (var i = 0; i < result.feed.entry.length; ++i)
+			{
+				var e=result.feed.entry[i];
+				photo_data={id:e.gphoto$id.$t,title:e.media$group.media$description.$t,thumb_url:e.media$group.media$thumbnail[0].url};
+				context['settings'].photos.push(photo_data);
+			}
+			
+			if (result.feed.openSearch$startIndex.$t+result.feed.openSearch$itemsPerPage.$t>=result.feed.openSearch$totalResults.$t){
+				//ho finito!
+				
+				//aggiungo il nuovo album!
+				var photoSorting=context['settings'].album_photo_sort;
+							
+				switch( photoSorting ) {
+				  case 'random':
+							context['settings'].photos = pwiAreaShuffle(context['settings'].photos);
+					break;
+				  case 'inverse':
+				  case 'reversed':
+							context['settings'].photos = context['settings'].photos.reverse();
+					break;
+				  case 'titleAsc':
+					context['settings'].photos.sort(function (a, b) {
+					  var x = a.title.toUpperCase();
+					  var y =  b.title.toUpperCase();
+					  return( (x < y) ? -1 : ((x > y) ? 1 : 0) );
+					});
+					break;
+				  case 'titleDesc':
+					context['settings'].photos.sort(function (a, b) {
+					  var x = a.title.toUpperCase();
+					  var y =  b.title.toUpperCase();
+					  return( (x > y) ? -1 : ((x < y) ? 1 : 0) );
+					});
+					break;
+				case 'id':
+						context['settings'].photos.sort(function (a, b) {
+						  var x =  a.id;
+						  var y =  b.id;
+						  return( (x < y) ? -1 : ((x > y) ? 1 : 0) );
+						});
+						break;
+					
+				}				
+				
+				
+				if (context['settings'].photos.length>0){	
+					context['settings'].thumb_url=context['settings'].photos[0].thumb_url;
+				}
+				
+				addAlbum(context['settings'],context['element']);
+			}else{
+				//altra chiamata per il rimanente
+				pwi_load_album_data(context,result.feed.openSearch$startIndex.$t+result.feed.openSearch$itemsPerPage.$t);
+			}			
+			
+			
+		}		
+		
 		function addAlbum(album,jquery_ozio_author){
 			var figure = jQuery('<a class="ozio-he-figure" href="' + album.album_local_url + '"  />');
 			var img=jQuery("<img src='" + album.thumb_url +
@@ -436,6 +540,10 @@ jQuery(document).ready(function ($)
 			var $thumbnail0 = result.feed.entry[0].media$group.media$thumbnail[0];
 
 			var album={
+				'username':this.username,
+				'albumid':this.album,
+				'authkey':this.authKey,
+
 				'title':result.feed.title.$t,
 				'thumb_url':$thumbnail0.url,
 				'thumb_height':$thumbnail0.height,
@@ -444,12 +552,13 @@ jQuery(document).ready(function ($)
 				'numphotos':result.feed.gphoto$numphotos.$t,
 				'album_local_url':this.album_local_url,
 				'album_local_title':this.album_local_title,
-				'album_id':this.album_id
+				'album_id':this.album_id,
+				'album_photo_sort':this.album_photo_sort
 			};
 			if (this.hasOwnProperty("manual_date")){
 				album.manual_date=this.manual_date;
 			}
-			addAlbum(album,jQuery('#ozio-he-author' + this.album_id));
+			addAlbumSortPhoto(album,jQuery('#ozio-he-author' + this.album_id));
 		}
 
 		function OnLoadError(jqXHR, textStatus, error)
@@ -477,7 +586,7 @@ jQuery(document).ready(function ($)
 						album_orig_sort:nanoAlbums[i].album_orig_sort
 					});
 					jQuery("#container_pwi_list > ul").append(author);
-					addAlbum(nanoAlbums[i],author);
+					addAlbumSortPhoto(nanoAlbums[i],author);
 					
 					
 				}
@@ -499,7 +608,7 @@ jQuery(document).ready(function ($)
 						album_orig_sort:last_album.album_orig_sort
 					});
 					jQuery("#container_pwi_list > ul").append(author);
-					addAlbum(last_album,author);
+					addAlbumSortPhoto(last_album,author);
 				}
 			
 			}
@@ -542,7 +651,7 @@ jQuery(document).ready(function ($)
 			        	ok=CheckAlbumName(itemTitle,context);
 			        }
 
-			        if( ok ) {
+			        if( ok && data.gphoto$numphotos.$t>0) {
 				            src=itemID;
 				            var s=itemThumbURL.substring(0, itemThumbURL.lastIndexOf('/'));
 				            s=s.substring(0, s.lastIndexOf('/')) + '/';
@@ -558,6 +667,10 @@ jQuery(document).ready(function ($)
 			        		}							
 				            
 							var album={
+									'username':context.userID,
+									'albumid':itemID,
+									'authkey':'',
+
 									'title':itemTitle,
 									'thumb_url':itemThumbURL,
 									'thumb_height':context.thumbSize,
@@ -568,7 +681,8 @@ jQuery(document).ready(function ($)
 									'album_local_title':context.album_local_title,
 									'album_real_local_url':context.album_local_url,
 									'album_id':context.album_id,
-									'album_orig_sort':context.album_orig_sort
+									'album_orig_sort':context.album_orig_sort,
+									'album_photo_sort':context.album_photo_sort
 								};
 				  			
 							    addAlbumNano(album);
@@ -620,7 +734,8 @@ jQuery(document).ready(function ($)
 									'album_local_title':context.album_local_title,
 									'album_real_local_url':context.album_local_url,
 									'album_id':context.album_id,
-									'album_orig_sort':context.album_orig_sort
+									'album_orig_sort':context.album_orig_sort,
+									'album_photo_sort':context.album_photo_sort
 								};
 				  			
 							    addAlbumNano(album);
