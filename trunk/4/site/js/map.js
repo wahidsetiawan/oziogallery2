@@ -58,8 +58,12 @@ jQuery(document).ready(function ($)
 					'limitedpassword'=>$item->params->get("limitedpassword", ""),
 				);
 				$deeplink='';
-				if (strpos($item->link, "&view=jgallery") === false && intval($item->params->get("ozio_nano_locationHash", "1"))==1){
-					$deeplink='#nanogallery/nanoGallery/'.$item->params->get("limitedalbum", "");
+				if (intval($item->params->get("ozio_nano_locationHash", "1"))==1){
+					if (strpos($item->link, "&view=jgallery") === false){
+						$deeplink='#nanogallery/nanoGallery/'.$item->params->get("limitedalbum", "");
+					}else{
+						$deeplink='#'.$item->params->get("limitedalbum", "");
+					}
 				}
 				
 				$g_parameters[]=array('skin'=>strpos($item->link, "&view=jgallery") === false?'nano':'jgallery','params'=>$p,'link'=>$link.$deeplink,'id'=>$item->id,'title'=>$item->title,'icon'=>$icon,'legend_icon'=>$legend_icon);
@@ -75,7 +79,7 @@ jQuery(document).ready(function ($)
 					icon:<?php echo json_encode($icon); ?>,
 					legend_icon:<?php echo json_encode($legend_icon); ?>,
 					g_flickrApiKey:"2f0e634b471fdb47446abcb9c5afebdc",
-					locationHash: <?php echo json_encode(strpos($item->link, "&view=jgallery") === false?intval($item->params->get("ozio_nano_locationHash", "1")):0); ?>,
+					locationHash: <?php echo json_encode(intval($item->params->get("ozio_nano_locationHash", "1"))); ?>,
 					skin: <?php echo json_encode(strpos($item->link, "&view=jgallery") === false?'nano':'jgallery'); ?>,
 					kind: <?php echo json_encode($item->params->get("ozio_nano_kind", "picasa")); ?>,
 					userID: <?php echo json_encode($item->params->get("ozio_nano_userID", "110359559620842741677")); ?>,
@@ -546,7 +550,7 @@ jQuery(document).ready(function ($)
 				if (g_parameters[obj.album_index].skin=='00fuerte'){
 					photolink=g_parameters[obj.album_index].link+'#'+(obj.photo_index+1);
 				}else if (g_parameters[obj.album_index].skin=='jgallery'){
-					photolink=g_parameters[obj.album_index].link+'#'+seed;
+					photolink=g_parameters[obj.album_index].link+'/'+entry.gphoto$id.$t;
 				}else{
 					photolink=g_parameters[obj.album_index].link+'/'+entry.gphoto$id.$t;
 				}
@@ -728,7 +732,11 @@ jQuery(document).ready(function ($)
 		        if( ok ) {
 		        		var deeplink='';
 		        		if (context.locationHash){
-		        			deeplink='#nanogallery/nanoGallery/'+itemID;
+							if (context.skin=='nano'){
+								deeplink='#nanogallery/nanoGallery/'+itemID;
+							}else{
+								deeplink='#'+itemID;
+							}
 		        		}
 						
 						//$g_parameters[]=array('params'=>$item->params->toArray(),'link'=>$link,'id'=>$item->id,'title'=>$item->title,'icon'=>$icon,'legend_icon'=>$legend_icon);

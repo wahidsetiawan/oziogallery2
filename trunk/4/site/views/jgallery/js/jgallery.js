@@ -1213,6 +1213,8 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
                 } );
             }
             else {
+				this.$thumbnailsContainerInner.attr("data-jgallery-album-gallery-id",this.$element.attr("data-jgallery-album-gallery-id"));//GI
+				
                 this.insertImages( this.$tmp, this.$thumbnailsContainerInner );                    
             }
             this.$tmp.remove();
@@ -1221,7 +1223,8 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
 
         insertAlbum: function( $this ) {
             var strTitle = $this.is( '[data-jgallery-album-title]' ) ? $this.attr( 'data-jgallery-album-title' ) : 'Album ' + this.intJ;
-            var $album = this.$thumbnailsContainerInner.append( '<div class="album" data-jgallery-album-title="' + strTitle + '"></div>' ).children( ':last-child' );
+            var album_gallery_id = $this.attr( 'data-jgallery-album-gallery-id');//GI hash
+            var $album = this.$thumbnailsContainerInner.append( '<div class="album" data-jgallery-album-gallery-id="'+album_gallery_id+'" data-jgallery-album-title="' + strTitle + '"></div>' ).children( ':last-child' );
 
             if ( this.intJ === 1 ) {
                 $album.addClass( 'active' );
@@ -1245,10 +1248,12 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
             var $parent;
             
             if ( $this.is( 'a' ) ) {
-                $a = $container.append( '<a href="' + $this.attr( 'href' ) + '">' + this.generateImgTag( $this.find( 'img' ).eq( 0 ) ).outerHtml() + '</a>' ).children( ':last-child' );
+				//GI hash
+                $a = $container.append( '<a data-jgallery-photo-gallery-id="'+$this.attr( 'data-jgallery-photo-gallery-id' )+'" href="' + $this.attr( 'href' ) + '">' + this.generateImgTag( $this.find( 'img' ).eq( 0 ) ).outerHtml() + '</a>' ).children( ':last-child' );
             }
             else if ( $this.is( 'img' ) ) {
-                $a = $container.append( $( '<a href="' + $this.attr( 'src' ) + '">' + this.generateImgTag( $this ).outerHtml() + '</a>' ) ).children( ':last-child' );
+				//GI hash
+                $a = $container.append( $( '<a data-jgallery-photo-gallery-id="'+$this.attr( 'data-jgallery-photo-gallery-id' )+'" href="' + $this.attr( 'src' ) + '">' + this.generateImgTag( $this ).outerHtml() + '</a>' ) ).children( ':last-child' );
                 $parent = $this.parent();
                 if ( this.isSlider && $parent.is( 'a' ) ) {
                     $a.attr( 'link', $parent.attr( 'href' ) );
@@ -2330,23 +2335,42 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                 this.refreshDragNavCropSize();
             }
             if ( options.historyPushState && this.jGallery.options.browserHistory ) {
+				//GI
+				var photo_gallery_id=$imgThumb.closest('a').attr('data-jgallery-photo-gallery-id');
+				var album_gallery_id=$imgThumb.closest('div').attr('data-jgallery-album-gallery-id');
+				
                 historyPushState( {
-                    path: $active.attr( 'src' )
+                    //path: $active.attr( 'src' )
+					path:album_gallery_id+"/"+photo_gallery_id
                 } );
             }
         },
 
         showPhotoByPath: function( path ) {
-
-			//GI hash
-			path=path.replace(/w[0-9]+\/$/, '');
+			var parts=path.split("/");
+			var album_gallery_id='';
+			var photo_gallery_id='';
+			if (parts.length>0){
+				album_gallery_id=parts[0];
+			}
+			if (parts.length>1){
+				photo_gallery_id=parts[1];
+			}
+			var $album=this.thumbnails.$albums.filter('[data-jgallery-album-gallery-id="'+album_gallery_id+'"]');
+			if ($album.length=== 0){
+				$album=this.thumbnails.$albums.first();
+			}
+			this.thumbnails.setActiveAlbum( $album );
 			
             //var $a = this.thumbnails.$albums.filter( '.active' ).find( 'a[href="' + path + '"]' );
-            var $a = this.thumbnails.$albums.filter( '.active' ).find( 'a[href^="' + path + '"]' );
+            var $a = this.thumbnails.$albums.filter( '.active' ).find( 'a[data-jgallery-photo-gallery-id="' + photo_gallery_id + '"]' );
 
             if ( $a.length === 0 ) {
                 //$a = this.thumbnails.$a.filter( 'a[href="' + path + '"]' ).eq( 0 );
-                $a = this.thumbnails.$a.filter( 'a[href^="' + path + '"]' ).eq( 0 );
+                //$a = this.thumbnails.$a.filter( 'a[href^="' + path + '"]' ).eq( 0 );
+				
+				$a = this.thumbnails.$albums.filter( '.active' ).find( 'a:first');
+				
             }
             if ( $a.length === 0 ) {
                 return;
