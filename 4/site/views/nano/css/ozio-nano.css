@@ -164,10 +164,15 @@ height:22px;
 width:22px;
 }
 
-#nanoGallery .nanoGalleryContainer, #nanoGallery{
+/*
+#nanoGallery .nanoGalleryContainer{
 	overflow:visible;
 }
 
+#nanoGallery{
+	overflow:visible;
+}
+*/
 
 
 

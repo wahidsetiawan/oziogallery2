@@ -511,6 +511,8 @@ jQuery( document ).ready(function( $ ) {
 				jcontainer=halbum;
 			}
 			
+			jcontainer.attr("data-jgallery-album-gallery-id",g_parameters[this.album_index]['params']['gallery_id']);
+			
 			for (var i=0;i<num_slides;i++){
 				
 				var large=g_parameters[this.album_index].slides[i].seed + actual_width;
@@ -523,6 +525,9 @@ jQuery( document ).ready(function( $ ) {
 					var himg=$('<img>');
 					himg.attr("src",large);
 					himg.attr("alt",alt);
+					
+					himg.attr("data-jgallery-photo-gallery-id",g_parameters[this.album_index].slides[i].photo_id);
+					
 					jcontainer.append(himg);
 				}else{
 					var himg=$('<img>');
@@ -531,6 +536,8 @@ jQuery( document ).ready(function( $ ) {
 
 					var ha=$('<a>');
 					ha.attr("href",large);
+
+					ha.attr("data-jgallery-photo-gallery-id",g_parameters[this.album_index].slides[i].photo_id);
 					
 					ha.append(himg);
 					jcontainer.append(ha);

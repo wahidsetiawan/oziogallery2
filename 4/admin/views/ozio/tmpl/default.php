@@ -101,7 +101,11 @@
 								'limitedpassword'=>$result->get("limitedpassword", "")
 							);
 							$row->skin='jgallery';
-							$row->link='index.php?option=com_oziogallery3&view=nano&Itemid='.$row->id;
+							$deeplink='';
+							if (intval($result->get("ozio_nano_locationHash", "1"))==1){
+								$deeplink='#'.$result->get("limitedalbum", "");
+							}							
+							$row->link='index.php?option=com_oziogallery3&view=nano&Itemid='.$row->id.$deeplink;
 
 							$g_parameters[]=$row;
 						}

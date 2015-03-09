@@ -8356,9 +8356,9 @@ button.mfp-close, button.mfp-arrow -> z-index: 100046;
         G.viewerSwipe.removeEventListeners();
         G.viewerSwipe=null;
 
-        //if( !(G.O.galleryFullpageButton && G.$E.base.hasClass('fullpage')) ) {      // avoid displaying scrollbar when gallery is in fullpage mode
+        if( !(G.O.galleryFullpageButton && G.$E.base.hasClass('fullpage')) ) {      // avoid displaying scrollbar when gallery is in fullpage mode
           ScrollbarSetVisible();
-        //}
+        }
 
         if( G.viewerIsFullscreen ) {
           G.viewerIsFullscreen=false;

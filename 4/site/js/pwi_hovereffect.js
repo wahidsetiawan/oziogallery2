@@ -557,7 +557,7 @@ jQuery(document).ready(function ($)
 								if (context.skin=='nano'){
 									deeplink='#nanogallery/nanoGallery/'+itemID;
 								}else{
-									deeplink='#'+s;
+									deeplink='#'+itemID;
 								}
 			        		}							
 				            
