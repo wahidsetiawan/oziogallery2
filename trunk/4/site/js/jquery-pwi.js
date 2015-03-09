@@ -1028,15 +1028,7 @@
 				'album_local_url':settings.album_local_url,
 				'album_local_title':settings.album_local_title,
 				'album_id':settings.album_id,
-				'manual_date':settings.manual_date,
-				
-				
-				'album_orig_sort':settings.album_orig_sort,
-				'album_photo_sort':settings.album_photo_sort,
-
-				'username':settings.username,
-				'album':settings.album,
-				'authKey':settings.authKey
+				'manual_date':settings.manual_date
 				
 				
 			});
